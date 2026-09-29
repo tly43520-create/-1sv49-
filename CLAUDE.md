@@ -175,6 +175,10 @@ All three use Tepi 8, PPdep 0.297.
 
 Note on HAsig 0.063: this σ is narrow, and whether it is achievable in a real process (implant plus anneal) should be argued in 6.3 存在问题.
 
+**Session log**
+- 2026-09-29 (Claude Code, v1): repo only had README → archived CLAUDE.md as v0; added `tools/check_cv.py` (checkpoint margin + TCAD vs hand deviation) and `results/iter02/README.md` (SWB check table, pre-run checklist, blank results table). R/3G TCAD **not run yet**. 4.2/4.3 submitted by teammates. Waiting for user to push VM files (handcalc.py, sentaurus/, matlab/, results/).
+- Versioning: one commit per version on the working branch, message prefix `vN:` (git tag push is blocked by the remote, 403).
+
 **Next steps, in priority order**
 1. **Run R and 3G in TCAD using 1D (`sde1D_param_dvs.cmd`).** Before running, check the SWB parameter table against §5 column by column. Compare with the hand model and choose the final design.
 2. **Regenerate the missing 1D CSVs**: re-run only the svisual v2 node for iter00, iter01, etc. Save them to `results/iterNN/`.
