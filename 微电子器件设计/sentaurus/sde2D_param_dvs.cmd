@@ -1,5 +1,5 @@
 ; ==========================================================
-; sde2D_param_dvs.cmd -- 2D planar hyperabrupt varactor, doping from SWB table
+; sde2D_param_dvs.cmd -- 2D planar hyperabrupt varactor, doping AND window width (@Wwin@) from SWB table
 ; Same parameter names as the quasi-1D script (up to 3 phosphorus Gaussians).
 ; y positive downward, units um. Output mesh: n<node>_msh.tdr
 ; ==========================================================
@@ -8,9 +8,10 @@
 (sdegeo:set-auto-region-naming OFF)
 
 ; ---------------- parameters ----------------
-(define Wtot  30.0)   ; total width
-(define Xw1    5.0)   ; window left edge
-(define Xw2   25.0)   ; window right edge
+(define Wwin  @Wwin@) ; P+ window width [um]: 20 (as iter00-2D) and 40 for the area/edge split
+(define Xw1    5.0)   ; window left edge (5 um oxide-covered margin on each side, unchanged)
+(define Xw2   (+ Xw1 Wwin)) ; window right edge
+(define Wtot  (+ Xw2 5.0))  ; total width (Wwin 20 -> 30 um, exactly the iter00-2D geometry)
 (define Tox    0.5)   ; passivation oxide thickness
 (define Tepi   @Tepi@) ; epi thickness
 (define Ytot  (+ Tepi 2.0)) ; bottom of truncated substrate (2 um N+)
