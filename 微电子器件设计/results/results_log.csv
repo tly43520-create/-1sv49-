@@ -1,0 +1,16 @@
+# 1SV149 TCAD run log. c(a,a) in F/um from SDevice 1 MHz AC, probe_curve values. 1D: pF@1mm2 = F/um * 1e18. 2D: divide by window width (um) first.
+# PPdep=0.297 (P+ sigma 0.08), Tepi=8 unless noted. HA2/HA3 peak 0 = layer absent.
+run,dim,HApeak,HApos,HAsig,HA2peak,HA2pos,HA2sig,HA3peak,HA3pos,HA3sig,Nepi,C1V_F_um,C3V_F_um,C5V_F_um,C8V_F_um,Ratio18,verdict,note
+iter00,1D,6e16,0.40,0.15,0,,,0,,,3e14,4.6591e-16,2.9235e-16,6.6094e-17,2.6405e-17,17.64,FAIL C3V high,single Gaussian baseline; C4V=2.143e-16; 1D csv not saved (re-run svisual v2 node)
+sweep01A-1,1D,3e16,0.40,0.15,0,,,0,,,3e14,2.9678e-16,4.3531e-17,2.7404e-17,1.9852e-17,14.95,FAIL,HApeak sweep
+sweep01A-2,1D,4.5e16,0.40,0.15,0,,,0,,,3e14,3.9987e-16,1.5990e-16,3.5523e-17,2.2372e-17,17.87,FAIL,HApeak sweep
+sweep01A-3,1D,6e16,0.40,0.15,0,,,0,,,3e14,4.6591e-16,2.9235e-16,6.6094e-17,2.6405e-17,17.64,FAIL,= iter00
+sweep01A-4,1D,8e16,0.40,0.15,0,,,0,,,3e14,5.3236e-16,3.6188e-16,2.6133e-16,3.9097e-17,13.62,FAIL,HApeak sweep
+sweep01A-5,1D,1.2e17,0.40,0.15,0,,,0,,,3e14,6.3012e-16,4.4939e-16,3.5997e-16,2.6725e-16,2.36,FAIL,HApeak sweep; conclusion: HApeak only moves the cliff
+ctrl-1,1D,6e16,0.40,0.15,3e15,1.0,0.30,0,,,3e14,,,,,9.126,FAIL,accidental control (HAsig should have been 0.10); Cs only in SWB screenshot
+ctrl-2,1D,6e16,0.40,0.15,3e15,1.0,0.30,0,,,2e14,,,,,11.075,FAIL,accidental control
+ctrl-3,1D,6.5e16,0.40,0.15,3e15,1.0,0.30,0,,,3e14,,,,,7.265,FAIL,accidental control
+ctrl-4,1D,6.5e16,0.40,0.15,3e15,1.0,0.30,0,,,2e14,,,,,8.333,FAIL,accidental control; hand model within 6.4% on all 4
+iter01,1D,6.5e16,0.40,0.10,3e15,1.0,0.30,0,,,2e14,4.6914e-16,1.8152e-16,8.6125e-17,2.4528e-17,19.127,PASS (not robust),469/182/86.1/24.5 pF; hand worst-case margin -0.03 (HApos +-0.02); local n max 6.2
+iter00-2D,2D W20,6e16,0.40,0.15,0,,,0,,,3e14,9.8080e-15,6.2462e-15,1.7901e-15,9.2955e-16,10.551,n/a,window 20 um of 30; HA full width; /20 = 490/312/89.5/46.5 pF; edge ~2e-16 F/um per edge; 1 mm2 projection 467/293/67.0/27.2 (edge <3%)
+2D-dup,2D W20,,,,,,,,,,,,,,,,INVALID,"'double Gaussian' 2D run: sde2D_dvs.cmd was hard-coded -> identical to iter00-2D. Discard."

@@ -1,0 +1,9 @@
+﻿# iter00 single-Gaussian practice varactor vs Toshiba 1SV149; f=1MHz; area assumed 1 mm2; sim = SDevice probe values
+VR_V,target_min_pF,target_max_pF,target_source,"sim_c(a,a)_F_per_um",sim_pF_at_1mm2,hand_calc_pF_at_1mm2,deviation_from_window,status
+1,435,540,datasheet spec C1V,4.59000e-16,459.0,455,0 (inside),PASS
+3,140.0,249.9,datasheet Table 1 C3V range,2.92355e-16,292.4,291,+17.0%,FAIL (high)
+4,,,no target,2.14300e-16,214.3,220,,n/a
+5,55.0,104.12,datasheet Table 1 C5V range,6.61000e-17,66.1,61,0 (inside),PASS
+8,19.9,30.0,datasheet spec C8V,2.64000e-17,26.4,26,0 (inside),PASS
+
+ratio_C1V/C8V_sim,17.39,target >= 15 (typ 19.5),PASS
