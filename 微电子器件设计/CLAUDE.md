@@ -45,7 +45,7 @@
 | ~~9/20~~ | 3.1 分工表 ✅ |
 | ~~9/21~~ | 4.1 方案 ✅ |
 | 9/27 | 4.2 应用电路调研表, 4.3 参数确认表 (owned by the other two teammates; check their status) |
-| 9/28–10/4 | Structure and principle verification ← **we are here** |
+| 9/28–10/4 | Structure and principle verification ← **we are here** (1D C-V design done 9/29; I-V, Q, 2D left) |
 | 10/11 24:00 | 6.1 理论设计报告, 6.2 仿真结果, 6.3 存在问题, 6.4 优化方案 |
 | 10/18 12:00 | 7.1 完成情况汇报表 |
 | 10/20 | 8.1 论文, 8.2 海报 |
@@ -105,7 +105,7 @@
 
 **Breakdown (hand estimate, candidate R)**
 - At 15 V, ∫α_p ≈ 0.004 and ∫α_n ≈ 0.05, far below 1, so avalanche will not happen.
-- **Punch-through to the N+ substrate occurs at about 15 V** (the depletion edge reaches Tepi = 8 µm). The I-V run must confirm that no leakage anomaly or early breakdown appears ≤ 15 V.
+- **Punch-through to the N+ substrate occurs at about 15 V at Tepi 8, and at about 10 V at Tepi 6 (the final design, confirmed by TCAD C-V).** Above that, C flattens at about 18 pF. At Tepi 6 and 40 V, ∫α_n is only ≈0.13. The I-V run must confirm that no leakage anomaly or early breakdown appears ≤ 15 V.
 
 ---
 
@@ -158,7 +158,7 @@
 | iter00-2D | iter00 doping, 2D window 20 µm | — | Confirms the 1D approach is valid (see §3) |
 | 2D "double Gaussian" | — | — | **Invalid**: the old `sde2D_dvs.cmd` was hard-coded, so the run duplicated iter00-2D |
 
-**iter02 candidates** (hand model only; TCAD not yet run)
+**iter02 candidates** (hand-model values; TCAD done in v3, see session log)
 
 | Parameter | **R (recommended)** | 3G | 2G |
 |---|---|---|---|
@@ -184,8 +184,8 @@ Note on HAsig 0.063: this σ is narrow, and whether it is achievable in a real p
 - Versioning: one commit per version on the working branch, message prefix `vN:` (git tag push is blocked by the remote, 403).
 
 **Next steps, in priority order**
-1. **Run R and 3G in TCAD using 1D (`sde1D_param_dvs.cmd`).** Before running, check the SWB parameter table against §5 column by column. Compare with the hand model and choose the final design.
-2. **Regenerate the missing 1D CSVs**: re-run only the svisual v2 node for iter00, iter01, etc. Save them to `results/iterNN/`.
+1. ~~Run R and 3G in 1D TCAD~~ ✅ v3: R chosen (Tepi 6).
+2. ~~Regenerate the missing 1D CSVs~~ ✅ v5 for iter01 and iter02. iter00 still only has `iter00_cv_vs_target.csv` (checkpoints), which is enough.
 3. **Reverse I-V on the final design** (separate SWB project): BV, I_R at 15 V, and whether punch-through affects them.
 4. **Q extraction**: Q = ω·c(a,a)/a(a,a) at 1 V, 1 MHz, taken from the existing acplot. No new sdevice run is needed; only svisual has to add the a(a,a) curve (confirm the name in the plt/sd manual). Substrate truncation is negligible (≈0.1 mΩ). Hand estimate R ≈ 295.
 5. **2D confirmation of the final design**: windows 20 and 40 µm with `sde2D_param_dvs.cmd`. **Before running sdevice, look at the doping in SVisual to confirm the parameters took effect.**
@@ -217,6 +217,7 @@ Note on HAsig 0.063: this σ is narrow, and whether it is achievable in a real p
 1SV149/
 ├── CLAUDE.md                ← this file (repo path: 微电子器件设计/)
 ├── tools/check_cv.py        ← TCAD C1/3/5/8 → checkpoint margins, TCAD vs hand
+├── tools/analyze_cv.py      ← full C-V csv → target rms, local n, N(W), punch-through, Q
 ├── handcalc.py              ← hand model (numpy + scipy)
 ├── sentaurus/               ← current SWB scripts (see §4)
 ├── matlab/
