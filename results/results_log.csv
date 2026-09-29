@@ -1,0 +1,3 @@
+run_id,date,dim,HApeak,HApos,HAsig,HA2peak,HA2pos,HA2sig,HA3peak,HA3pos,HA3sig,Nepi,Tepi,PPdep,C1V_pF,C3V_pF,C5V_pF,C8V_pF,Ratio18,verdict,notes
+iter00,,1D,6e16,0.40,0.15,,,,,,,3e14,,,466,292,66.1,26.4,17.6,FAIL C3V,single Gaussian; transcribed from CLAUDE.md §5 (original CSV lost)
+iter01,,1D,6.5e16,0.40,0.10,3e15,1.0,0.30,,,,2e14,,,469,182,86.1,24.5,19.1,PASS (worst-case margin -0.03),candidate A; n_max 6.2 cliff at 5-6V; transcribed from CLAUDE.md §5
