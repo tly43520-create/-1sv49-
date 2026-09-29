@@ -171,13 +171,14 @@
 | Worst-case margin | **+0.21** | +0.13 | — |
 | rms vs target / n_max | 3.9% / 3.5 | 2.0% / 3.2 | 5.3% / 3.85 |
 
-All three use Tepi 8, PPdep 0.297.
+All three use Tepi 8, PPdep 0.297 in the hand model. **TCAD iter02 was run at Tepi 6 → R chosen (see results/iter02/README.md).**
 
 Note on HAsig 0.063: this σ is narrow, and whether it is achievable in a real process (implant plus anneal) should be argued in 6.3 存在问题.
 
 **Session log**
 - 2026-09-29 (Claude Code, v1): repo only had README → archived CLAUDE.md as v0; added `tools/check_cv.py` (checkpoint margin + TCAD vs hand deviation) and `results/iter02/README.md` (SWB check table, pre-run checklist, blank results table). R/3G TCAD **not run yet**. 4.2/4.3 submitted by teammates. Waiting for user to push VM files (handcalc.py, sentaurus/, matlab/, results/).
 - 2026-09-29 (v2): user uploaded the VM files → everything consolidated under `微电子器件设计/` (repo root keeps only README). Review of the uploaded scripts: `handcalc.py` reproduces §5 exactly (R worst +0.214, 3G +0.134, punch-through 15.5 V). `sde1D_param_dvs.cmd` has the 12 `@..@` params matching the iter02 table. Open points: (a) `results/iter00/iter00_cv_vs_target.csv` says C1V = 4.59e-16 (459 pF, ratio 17.39), while `results_log.csv` says 4.6591e-16 (466, ratio 17.64); the iter00 svisual re-run will settle it. (b) The I-V run uses the default SRH lifetime, so I_R@15 V scales with an unchosen τ; state the τ when quoting I_R. (c) `claude-legacy-project-memory-*.md` was emptied by the user on purpose; do not restore it.
+- 2026-09-29 (v3): **iter02 TCAD done at Tepi 6** (the user changed it from 8; see `sentaurus/iter02/iter02_params.csv`). R 490/196/79.5/24.8 pF, ratio 19.79, margin +0.423. 3G 484/192/76.9/26.2, ratio 18.47, margin +0.329. Hand model within −1.3…+3.3%. **Final design = R @ Tepi 6.** Hand-model punch-through at Tepi 6 is about 10 V (not 15 V). R-T8 control not run.
 - Versioning: one commit per version on the working branch, message prefix `vN:` (git tag push is blocked by the remote, 403).
 
 **Next steps, in priority order**

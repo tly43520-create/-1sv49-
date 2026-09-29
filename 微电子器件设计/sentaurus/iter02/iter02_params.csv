@@ -1,0 +1,5 @@
+# SWB table rows for sde1D_param_dvs.cmd (and sde2D_param_dvs.cmd: same names). Row 3 = control: R at Tepi 8 -> C-V should equal row 1
+case,Tepi,Nepi,PPdep,HApeak,HApos,HAsig,HA2peak,HA2pos,HA2sig,HA3peak,HA3pos,HA3sig
+iter02-R,6.0,1.5e14,0.297,7.3e16,0.40,0.063,7.6e15,0.54,0.25,1.0e15,0.88,0.80
+iter02-3G,6.0,1.6e14,0.297,7.0e16,0.38,0.075,7.7e15,0.51,0.26,9.5e14,1.0,0.80
+iter02-R-T8,8.0,1.5e14,0.297,7.3e16,0.40,0.063,7.6e15,0.54,0.25,1.0e15,0.88,0.80

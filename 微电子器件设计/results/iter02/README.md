@@ -1,6 +1,7 @@
 # iter02 — 1D TCAD verification of candidates R and 3G
 
-**Status:** not run yet (as of 2026-09-29)
+**Status:** run 2026-09-29, both PASS → **R chosen as final design**
+**Actual SWB input:** `sentaurus/iter02/iter02_params.csv` (**Tepi = 6.0**, not 8; the R-T8 control row has not been run yet)
 **Script:** `sentaurus/sde1D_param_dvs.cmd` → `sdevice_des.cmd` → `svisual_vis_v2.tcl`
 **Goal:** confirm the hand-model candidates in TCAD, then pick the final design (CLAUDE.md §5, next step 1).
 
@@ -36,13 +37,23 @@ Hand predictions from CLAUDE.md §5. TCAD values come from the svisual DOE colum
 
 | | R hand | R TCAD | 3G hand | 3G TCAD |
 |---|---|---|---|---|
-| C1V [pF] | 497 | | 489 | |
-| C3V | 191 | | 187 | |
-| C5V | 77 | | 74.7 | |
-| C8V | 24 | | 25.5 | |
-| C1/C8 | 20.6 | | 19.2 | |
-| Margin | +0.384 | | +0.396 | |
-| Worst-case margin (hand) | +0.21 | — | +0.13 | — |
+| C1V [pF] | 497 | **490.4** (−1.3%) | 489 | **484.1** (−1.0%) |
+| C3V | 191 | **195.6** (+2.4%) | 187 | **191.6** (+2.5%) |
+| C5V | 77 | **79.5** (+3.3%) | 74.7 | **76.9** (+3.0%) |
+| C8V | 24 | **24.8** (+3.2%) | 25.5 | **26.2** (+2.8%) |
+| C1/C8 | 20.6 | **19.79** | 19.2 | **18.47** |
+| Margin | +0.380 | **+0.423** | +0.394 | **+0.329** |
+| Worst-case margin | +0.214 (hand) | **+0.166** (TCAD-corrected) | +0.134 (hand) | **+0.068** (TCAD-corrected) |
+
+Raw c(a,a) [F/µm] are in `results_log.csv`. Screenshots: `iter02-R_swb_doe.png`, `iter02-3G_swb_doe.png`.
+The hand values are at Tepi 8. The hand model gives identical C1–C8 at Tepi 6, because W(8 V) ≈ 4.3 µm is less than 6 µm.
+"TCAD-corrected worst-case" means: the hand-model ±perturbation C values are multiplied by the per-checkpoint TCAD/hand ratio, and the worst margin is taken.
+
+### Verdict
+- The hand model is confirmed. Deviation is −1% at 1 V (the ×1.025 bias correction slightly overshoots) and +2.4 to +3.3% at 3–8 V. Everything is inside the §3 claim of ≤4%.
+- **R is chosen.** It has the larger nominal margin (+0.42 vs +0.33) and the larger robust margin (+0.17 vs +0.07). 3G's 8 V point sits near the upper limit. The gap is not small, so the "prefer 3G if close" rule does not apply.
+- R's weak spot is still HApos+0.02 (the cliff moves), and HAsig 0.063 must be argued in 6.3.
+- Tepi 6: the hand model puts punch-through to N+ at about 9.5–10 V, which is below the old ~15 V. Up to 40 V the ionization integral is ∫α_n ≤ 0.13, so this is not a breakdown risk. Above about 10 V, C will flatten, and this has to be shown in the I-V/C-V to 15 V.
 
 Check each run with:
 
