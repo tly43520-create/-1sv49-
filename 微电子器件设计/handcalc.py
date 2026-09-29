@@ -42,7 +42,7 @@ KEYS = ["HApeak", "HApos", "HAsig", "HA2peak", "HA2pos", "HA2sig",
         "HA3peak", "HA3pos", "HA3sig", "Nepi"]
 
 DESIGNS = {
-    # iter00: single Gaussian (TCAD: 466/292/66.1/26.4 pF, C3V fails)
+    # iter00: single Gaussian (TCAD: 459/292/66.1/26.4 pF, C3V fails)
     "iter00": dict(HApeak=6e16, HApos=0.40, HAsig=0.15, HA2peak=1e10, HA2pos=1.0, HA2sig=0.3,
                    HA3peak=1e10, HA3pos=1.0, HA3sig=0.8, Nepi=3e14),
     # iter01 = candidate A (TCAD: 469/182/86.1/24.5 pF, all pass, but not robust, n_max 6.2)
