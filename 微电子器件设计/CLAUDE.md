@@ -129,7 +129,7 @@
 | `svisual_vis_v2.tcl` | `probe_curve` reads C1/3/5/8 V and Ratio18 as DOE columns, and writes `n@node@_cv.csv` | In use (v1 with `export_variables` wrote no CSV and is obsolete) |
 | `svisual_vis_v3.tcl` | v2 plus the `a(a,a)` column (Q), DOE Q1V, and a doping cut → `n@node@_dop.csv` | **New in v6, not run yet.** Replaces v2 when the next C-V batch runs. `@tdrdat|sdevice@` is unverified (see matlab/README.md) |
 | `sdevice_iv_des.cmd` | Reverse I-V to −60 V with Avalanche(GradQuasiFermi), BreakCriteria 1e-9 A/µm | **Not run yet**. If it fails to converge, add `Resistor=` on the Anode (external-resistor method, sd §11.5). Put it in a separate SWB project. |
-| `svisual_iv_vis.tcl` | DOE columns IR15_nA, BV10uA_V, Vmax_V; writes `n@node@_iv.csv` | Not run yet. The curve names `"Anode InnerVoltage"` and `"Anode TotalCurrent"` are **inferred and unverified**; check them against the actual plt on the first run. |
+| `svisual_iv_vis.tcl` | DOE columns IR15_nA, BV10uA_V, Vmax_V; writes `n@node@_iv.csv` | Not run yet. The curve names `"Anode InnerVoltage"` / `"Anode TotalCurrent"` follow the manual pattern `"<contact> InnerVoltage"` / `"<contact> TotalCurrent"` (sv §6.2, GUI: sv §3.2 Data Selection panel → contact in the middle pane, quantity in the bottom pane). The contact name must match `Electrode { Name="Anode" }`. |
 
 **Unit conversions**
 - 1D (width 1 µm): C[pF @ 1 mm²] = c(a,a)[F/µm] × 1e18.
