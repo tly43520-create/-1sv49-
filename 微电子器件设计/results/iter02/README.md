@@ -78,12 +78,16 @@ python3 tools/check_cv.py <C1> <C3> <C5> <C8> --hand 489 187 74.7 25.5 --name "3
 
 | | R | 3G | iter01 (ref) |
 |---|---|---|---|
-| rms vs target curve (1–8 V) | 4.7% (hand 3.9%) | 4.1% (hand 2.0%) | 8.4% |
+| rms vs target curve (1–8 V, 0.05 V grid)* | 5.0% (hand 3.9%) | 3.7% (hand 2.0%) | 8.9% |
 | local n max (1–8 V) | 3.29 @ 6.7 V (hand 3.50 @ 6.7 V) | 3.00 @ 7.0 V (hand 3.18) | 4.84 @ 5.8 V |
 | worst point vs target | 4 V +9.5% | 8 V +7.4% | 5 V +13.8% |
 | profiled epi plateau N | 1.53e14 (input 1.5e14) | 1.63e14 (input 1.6e14) | 1.99e14 (input 2e14) |
 | punch-through onset | ~10.0 V | ~10.3 V | ~14.8 V |
 | C(15 V) / C1/C15 | 18.2 pF / 26.9 | 18.2 pF / 26.5 | 13.9 pF / 33.8 |
+
+*v6 changed the rms definition from 8 integer points (4.7 / 4.1 / 8.4%) to a 0.05 V grid, so that it matches `matlab/analyze_cv.m`. The handcalc `rms_vs_target` uses 29 points (0.25 V), so the two kinds of number are close but not identical.
+
+Figures (v6, `matlab/run_analysis.m`): `iter02_cv_cv.png` (C-V + windows), `iter02_cv_dev.png`, `iter02_cv_n.png`, `iter02_cv_NW.png`; summary in `iter02_cv_summary.csv`.
 
 - **The C-V profiling closes the loop.** N(W) = C³/(qεA²|dC/dV|) returns the epi plateau within 2% for all three runs, so it can go into 6.1/6.2 as the method check.
 - **R has no cliff.** Its local n peak matches the hand model in both value and position (3.29 vs 3.50 at 6.7 V). R sits above target by 3–10% at 2–5 V: it passes, but it is the shape error that could still be trimmed. It is not worth another iteration.

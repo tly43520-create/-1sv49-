@@ -126,6 +126,7 @@
 | `sde2D_param_dvs.cmd` | 2D: window 5–25 µm, total 30 µm, oxide 0.5 µm; P+ on the window only, HA on the full width; same parameter names as 1D | **Main 2D script**. The mesh matches the one actually run: about 101k points, and I decided not to change it. |
 | `sdevice_des.cmd` | C-V: mixed-mode `Vsource_pset` + `ACCoupled`, 1 MHz, sweep 0 → −15 V | In use |
 | `svisual_vis_v2.tcl` | `probe_curve` reads C1/3/5/8 V and Ratio18 as DOE columns, and writes `n@node@_cv.csv` | In use (v1 with `export_variables` wrote no CSV and is obsolete) |
+| `svisual_vis_v3.tcl` | v2 plus the `a(a,a)` column (Q), DOE Q1V, and a doping cut → `n@node@_dop.csv` | **New in v6, not run yet.** Replaces v2 when the next C-V batch runs. `@tdrdat|sdevice@` is unverified (see matlab/README.md) |
 | `sdevice_iv_des.cmd` | Reverse I-V to −60 V with Avalanche(GradQuasiFermi), BreakCriteria 1e-9 A/µm | **Not run yet**. If it fails to converge, add `Resistor=` on the Anode (external-resistor method, sd §11.5). Put it in a separate SWB project. |
 | `svisual_iv_vis.tcl` | DOE columns IR15_nA, BV10uA_V, Vmax_V; writes `n@node@_iv.csv` | Not run yet. The curve names `"Anode InnerVoltage"` and `"Anode TotalCurrent"` are **inferred and unverified**; check them against the actual plt on the first run. |
 
@@ -134,7 +135,8 @@
 - 2D: first divide by the window width (µm). To separate the area and edge terms, run with windows of 20 and 40 µm (`matlab/compare_2D_1D.m`).
 - Breakdown criteria: 10 µA @ 1 mm² = 1e-11 A/µm; 50 nA @ 1 mm² = 5e-14 A/µm.
 
-**MATLAB** (`matlab/`)
+**MATLAB** (`matlab/`): see `matlab/README.md` for the export list (what each CSV must contain).
+- `run_analysis.m` → `analyze_cv.m` / `analyze_iv.m`: full analysis and figures. Octave-compatible and tested in v6.
 - `target_cv_1SV149.m`: target C-V and target N(W); can overlay the current design and a simulated CSV.
 - `compare_2D_1D.m`: 1D vs 2D comparison and area/edge separation.
 - Compatibility: for versions older than R2019a, change `readmatrix` to `csvread(f,1,0)`; for versions older than R2018b, delete `yline`.
@@ -181,6 +183,7 @@ Note on HAsig 0.063: this σ is narrow, and whether it is achievable in a real p
 - 2026-09-29 (v3): **iter02 TCAD done at Tepi 6** (the user changed it from 8; see `sentaurus/iter02/iter02_params.csv`). R 490/196/79.5/24.8 pF, ratio 19.79, margin +0.423. 3G 484/192/76.9/26.2, ratio 18.47, margin +0.329. Hand model within −1.3…+3.3%. **Final design = R @ Tepi 6.** Hand-model punch-through at Tepi 6 is about 10 V (not 15 V). R-T8 control not run.
 - 2026-09-29 (v4): iter00 C1V settled at **459 pF** (4.59e-16, SVisual probe; the 466 in the old log was wrong). The C1V_BIAS check: TCAD/raw-hand at 1 V = 1.009 (iter00), 1.018 (iter01), 1.011 (R), 1.014 (3G), mean ≈ 1.013, not 1.025. Proposed to change it; **not changed yet**, pending the user's OK.
 - 2026-09-29 (v5): full 0–15 V curves archived (`results/iter01`, `results/iter02`); new `tools/analyze_cv.py` (target rms, local n, profiled N(W), punch-through). R: rms 4.7%, n_max 3.29 @ 6.7 V (= hand), profiled Nepi 1.53e14 ✓, **punch-through ~10 V at Tepi 6** (C flat at 18.2 pF above it). Hand Q(1 V, 1 MHz): **R ≈ 295 at Tepi 6, ≈ 191 at Tepi 8 (< 200 spec)**, so Tepi 6 is what makes Q pass. Datasheet (Drive): Q ≥ 200 @ 1 V 1 MHz; I_R ≤ 50 nA @ 15 V; V_R ≥ 15 V @ 10 µA.
+- 2026-09-29 (v6): the user confirmed that **Tepi 6 was chosen for Q**. The user wants to keep improving the parameters before writing 6.x. Added the MATLAB analysis (`matlab/run_analysis.m`, `analyze_cv.m`, `analyze_iv.m`, README with the export list) and `sentaurus/svisual_vis_v3.tcl` (a(a,a) → Q, doping cut). The rms definition is now a 0.05 V grid in both Python and MATLAB (R 5.0%, 3G 3.7%). Figures are in `results/iter02/iter02_cv_*.png`.
 - Versioning: one commit per version on the working branch, message prefix `vN:` (git tag push is blocked by the remote, 403).
 
 **Next steps, in priority order**

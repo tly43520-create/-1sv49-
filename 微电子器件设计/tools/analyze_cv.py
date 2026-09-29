@@ -11,6 +11,7 @@ punch-through indicator (W stops growing).
 """
 import sys
 import numpy as np
+from scipy.interpolate import PchipInterpolator
 
 q = 1.602e-19
 eps = 11.7 * 8.854e-14            # F/cm
@@ -18,6 +19,8 @@ VBI = 0.8                          # V, same as handcalc.local_n
 TGT_V = np.arange(1, 9)
 TGT = np.array([485, 299, 187, 118, 75.7, 50.7, 34.8, 24.4])   # target_cv_1SV149.m, pF @ 1 mm^2
 W_1MHZ = 2 * np.pi * 1e6
+CK_V = np.array([1, 3, 5, 8])
+CK_CTR = np.sqrt(np.array([435, 140, 55, 19.9]) * np.array([540, 249.9, 104.12, 30.0]))   # window log-centres
 
 
 def load(f):
@@ -37,11 +40,13 @@ def analyze(f):
     W = eps / Cf * 1e4                              # um
     N = Cf**3 / (q * eps * np.abs(np.gradient(Cf, V)))
     m = (V >= 1) & (V <= 8)
-    rms = np.sqrt(np.mean(np.log(Ct / TGT)**2))
+    Vf = np.arange(1, 8.0001, 0.05)                 # same definition as matlab/analyze_cv.m
+    Cf_t = np.exp(PchipInterpolator(np.log(CK_V + VBI), np.log(CK_CTR))(np.log(Vf + VBI)))
+    rms = np.sqrt(np.mean(np.log(np.interp(Vf, V, C) / Cf_t)**2))
     print(f"== {f}")
     print(f"C1..8 [pF]      : " + " ".join(f"{c:6.1f}" for c in Ct))
     print(f"vs target [%]   : " + " ".join(f"{100*(c/t-1):+6.1f}" for c, t in zip(Ct, TGT)))
-    print(f"rms vs target {100*rms:.1f}%   C1/C8 {Ct[0]/Ct[7]:.2f}   C0 {C[0]:.0f}  C(Vmax={V[-1]:.0f}V) {C[-1]:.1f} pF")
+    print(f"rms vs target (1-8 V, 0.05 V grid) {100*rms:.1f}%   C1/C8 {Ct[0]/Ct[7]:.2f}   C0 {C[0]:.0f}  C(Vmax={V[-1]:.0f}V) {C[-1]:.1f} pF")
     print(f"local n max (1-8 V) {n[m].max():.2f} at {V[m][n[m].argmax()]:.1f} V")
     # punch-through: profiled N(W) climbs above 3x the epi plateau (min N for V > 1) -> edge reached N+
     k = V > 1
