@@ -20,6 +20,7 @@ Usage:
   python3 handcalc.py                 # evaluate built-in designs (iter00, iter01, iter02-R, iter02-3G)
   python3 handcalc.py --robust R      # worst-case margin of one design under +/- perturbations
   python3 handcalc.py --bv R          # ionization-integral breakdown estimate
+  python3 handcalc.py --q R 6         # Q(1 V, 1 MHz) estimate at Tepi = 6 um
   import handcalc as h; h.report(h.DESIGNS["R"])
 """
 import sys
@@ -31,6 +32,9 @@ kT = 0.02585                    # V, 300 K
 ni = 1e10                       # cm^-3
 um = 1e-4                       # cm
 C1V_BIAS = 1.025                # empirical correction of the hand model vs TCAD at 1 V
+RS_OFFSET_UM = 0.65             # neutral-epi length that TCAD does not see as resistive (~2 Debye lengths;
+                                # likely n/n+ accumulation + soft depletion edge). Calibrated on TCAD Q:
+                                # iter01 262.2 (Tepi 8), R 362.2, 3G 400.4 (Tepi 6) -> 0.59/0.68/0.69 um
 
 # 1SV149 checkpoint windows [pF] (C3V, C5V = datasheet Table 1 group-total ranges)
 VCK = np.array([1, 3, 5, 8])
@@ -186,6 +190,27 @@ def bv_estimate(d, Vmax=40.0):
               "  (breakdown when ~1)")
 
 
+def q_estimate(d, Tepi=6.0, V=1.0, f=1e6, calibrated=True):
+    """Q = 1/(w C Rs); Rs = integral of rho over the undepleted N side (xb(V) .. Tepi), 1 mm^2,
+    electron mobility Caughey-Thomas. calibrated=True subtracts RS_OFFSET_UM of epi (TCAD fit)."""
+    mu = lambda N: 68.5 + (1414 - 68.5) / (1 + (N / 9.2e16)**0.711)
+    x = _x
+    NA, ND = profiles(d, Tepi=Tepi)
+    net = ND - NA
+    S = np.concatenate([[0], np.cumsum((net[1:] + net[:-1]) / 2) * _dx])
+    j = np.argmin(S)
+    Vr, W, _ = cvcurve(d, Tepi=Tepi)
+    kb = np.arange(j + 1, len(x))
+    kb = kb[S[kb] <= 0]
+    xb = x[kb[np.searchsorted(Vr, V)]]
+    m = (x >= xb) & (x < Tepi * um)
+    Rs = np.trapezoid(1 / (q * net[m] * mu(net[m])), x[m]) / 1e-2          # ohm for 1 mm^2
+    if calibrated:
+        Rs -= RS_OFFSET_UM * um / (q * d["Nepi"] * mu(d["Nepi"])) / 1e-2
+    C = cap_pF(d, [V], Tepi=Tepi)[0] * 1e-12
+    return 1 / (2 * np.pi * f * C * Rs), Rs
+
+
 def report(d, name=""):
     C = cap_pF(d, VCK)
     m = margins(C)
@@ -200,6 +225,10 @@ if __name__ == "__main__":
     a = sys.argv[1:]
     if a and a[0] == "--robust":
         robust(DESIGNS[a[1]])
+    elif a and a[0] == "--q":
+        for T in ([float(a[2])] if len(a) > 2 else [5.0, 5.5, 6.0, 7.0, 8.0]):
+            Qc, Rs = q_estimate(DESIGNS[a[1]], Tepi=T)
+            print(f"Tepi {T:4.1f} um: Rs {Rs:.3f} ohm @ 1 mm^2  Q(1 V, 1 MHz) ~ {Qc:.0f}  (spec >= 200)")
     elif a and a[0] == "--bv":
         bv_estimate(DESIGNS[a[1]])
     else:
