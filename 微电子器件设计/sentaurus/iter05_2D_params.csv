@@ -1,0 +1,6 @@
+# iter05: three 2D runs of design R (iter02), sde2D_param_dvs.cmd. Doping identical to iter02-R (Tepi 6).
+# Runs A and B: C-V (sdevice_des.cmd + svisual_vis_2d.tcl). Run C: I-V 0-15 V (sdevice_ir15_des.cmd + svisual_iv_2d.tcl), separate SWB project.
+run,flow,Wwin,Tepi,Nepi,PPdep,HApeak,HApos,HAsig,HA2peak,HA2pos,HA2sig,HA3peak,HA3pos,HA3sig
+iter05-A,CV,20,6.0,1.5e14,0.297,7.3e16,0.40,0.063,7.6e15,0.54,0.25,1.0e15,0.88,0.80
+iter05-B,CV,40,6.0,1.5e14,0.297,7.3e16,0.40,0.063,7.6e15,0.54,0.25,1.0e15,0.88,0.80
+iter05-C,IV,20,6.0,1.5e14,0.297,7.3e16,0.40,0.063,7.6e15,0.54,0.25,1.0e15,0.88,0.80

@@ -1,0 +1,7 @@
+# SWB table rows for sde1D_param_dvs.cmd, iter04 manufacturable candidates (tools/optimize_fab.py, modern tolerances). HA3peak 1e10 = off
+# F*: straggle table as is; P*: straggle table x1.15 (feasible even if real dRp is 15 % larger). Run P3 first.
+case,Tepi,Nepi,PPdep,HApeak,HApos,HAsig,HA2peak,HA2pos,HA2sig,HA3peak,HA3pos,HA3sig
+iter04-P3,6.0,1.75e+14,0.297,7.67e+16,0.341,0.11,3.41e+15,0.582,0.345,8.67e+14,1.09,0.584
+iter04-F3,6.0,1.33e+14,0.297,6.75e+16,0.368,0.103,3.52e+15,0.538,0.385,8.19e+14,0.804,0.981
+iter04-P2,6.0,1.89e+14,0.297,7.2e+16,0.343,0.12,3.04e+15,0.437,0.705,1e+10,1.0,0.8
+iter04-F2,6.0,2.06e+14,0.297,6.55e+16,0.373,0.107,3.41e+15,0.461,0.626,1e+10,1.0,0.8

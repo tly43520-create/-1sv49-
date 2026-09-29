@@ -96,3 +96,21 @@ Figures (v6, `matlab/run_analysis.m`): `iter02_cv_cv.png` (C-V + windows), `iter
   R at Tepi 6: R_s ≈ 1.10 Ω @ 1 mm², **Q(1 V) ≈ 295**. At Tepi 8: 1.69 Ω, **Q ≈ 191, which fails the datasheet Q ≥ 200 (V_R = 1 V, f = 1 MHz)**.
   3G: 325 / 210. The N+ substrate adds about 0.1 mΩ for 2 µm, and even a real 200 µm substrate adds only about 0.01 Ω, so truncating the substrate does not matter for Q.
   → The Tepi 8 → 6 change is what makes R meet Q. Confirm this with TCAD (`Q = ωc(a,a)/a(a,a)` from the existing acplot; see CLAUDE.md §5).
+
+## 7. TCAD Q (added 2026-09-29, v8)
+
+The user extracted these in SVisual at V_R = 1 V, 1 MHz. The datasheet requires Q ≥ 200.
+
+| | Tepi | **Q TCAD** | R_s TCAD [Ω @ 1 mm²] | hand Q (raw ∫ρdx) | hand/TCAD R_s gap |
+|---|---|---|---|---|---|
+| iter01 | 8 | **262.2** | 1.294 | 238 | 0.131 Ω = 0.59 µm of epi |
+| R | 6 | **362.2** | 0.896 | 296 | 0.201 Ω = 0.68 µm |
+| 3G | 6 | **400.4** | 0.821 | 324 | 0.193 Ω = 0.69 µm |
+
+R_s is derived from TCAD as R_s = 1/(ωC·Q).
+
+- **All three pass Q ≥ 200. R has 1.8× margin.**
+- The raw hand model **underestimates Q by 10–23%**, but the gap is an almost constant *length*: 0.65 ± 0.05 µm of neutral epi, which is about 2 Debye lengths (L_D ≈ 0.3 µm). The likely cause is electron spill-over (accumulation) at the n⁻/n⁺ interface plus the soft depletion edge. Both shorten the resistive length. This is a hypothesis; it could be checked with a TCAD eDensity cut at 1 V.
+- `handcalc.q_estimate()` / `python3 handcalc.py --q R` now subtracts this 0.65 µm (`RS_OFFSET_UM`). It reproduces TCAD within 2%: R 354, 3G 391, iter01 264.
+- **Correction of v5:** v5 said that R at Tepi 8 would have Q ≈ 191, below spec. With the calibration it would be **≈ 214**: it passes, but with only a 7% margin. Tepi 6 is still the right choice (Q margin 1.8× instead of 1.07×), but the reason is Q *margin*, not a Q *failure* at Tepi 8.
+- Calibrated trade-off for R: Tepi 5 / 5.5 / 6 / 7 / 8 → Q ≈ 528 / 424 / 354 / 267 / 214, with punch-through at about 10 V for Tepi 6 and about 15 V for Tepi 8. Thinner than 6 µm gains Q that is not needed and moves punch-through toward 8 V, where it would start to affect C8V. **Keep Tepi 6.**

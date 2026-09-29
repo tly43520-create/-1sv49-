@@ -90,6 +90,7 @@
 
 **Q and thickness**
 - Q = 1/(ωC·R_s); Q × ratio ≈ 1/(ω ε ρ). Q is independent of area.
+- **TCAD Q (1 V, 1 MHz): iter01 262.2 (Tepi 8), R 362.2 and 3G 400.4 (Tepi 6); all pass ≥ 200.** The raw ∫ρdx hand model underestimates Q because TCAD's resistive neutral epi is about 0.65 µm (≈ 2 L_D) shorter. `handcalc.q_estimate()` subtracts this (`RS_OFFSET_UM`) and matches TCAD within 2%.
 - C-V only fixes the profile shape. The scale is set by two opposing trends: breakdown favours thick, while Q ∝ 1/k² favours thin.
 
 **Material:** a wider bandgap gives a larger V_bi, which reduces the capacitance ratio. **Si is the best choice.**
@@ -123,12 +124,14 @@
 | File | Purpose | Status |
 |---|---|---|
 | `sde1D_param_dvs.cmd` | Quasi-1D (width 1 µm), 3-Gaussian N side, all parameters `@..@` | **Main 1D script** (merges sweep01 with the HA2/HA3 I added by hand; diff it against my VM copy before first use) |
-| `sde2D_param_dvs.cmd` | 2D: window 5–25 µm, total 30 µm, oxide 0.5 µm; P+ on the window only, HA on the full width; same parameter names as 1D | **Main 2D script**. The mesh matches the one actually run: about 101k points, and I decided not to change it. |
+| `sde2D_param_dvs.cmd` | 2D: window from x = 5 to 5 + **@Wwin@** µm, 5 µm oxide margin on each side, oxide 0.5 µm; P+ on the window only, HA on the full width; same parameter names as 1D | **Main 2D script**. Wwin was parameterised in v12 (Wwin 20 = the old 30 µm geometry, which had about 101k points). |
+| `svisual_vis_2d.tcl` | 2D C-V: DOE C*V_pF normalised by Wwin (includes the edge term), C*V_raw, Q1V, doping cut at the window centre | v12, not run yet |
+| `sdevice_ir15_des.cmd` / `svisual_iv_2d.tcl` | SWB version of the team 0–15 V I-V deck / I-V extraction normalised by Wwin | v12, not run yet |
 | `sdevice_des.cmd` | C-V: mixed-mode `Vsource_pset` + `ACCoupled`, 1 MHz, sweep 0 → −15 V | In use |
 | `svisual_vis_v2.tcl` | `probe_curve` reads C1/3/5/8 V and Ratio18 as DOE columns, and writes `n@node@_cv.csv` | In use (v1 with `export_variables` wrote no CSV and is obsolete) |
 | `svisual_vis_v3.tcl` | v2 plus the `a(a,a)` column (Q), DOE Q1V, and a doping cut → `n@node@_dop.csv` | **New in v6, not run yet.** Replaces v2 when the next C-V batch runs. `@tdrdat|sdevice@` is unverified (see matlab/README.md) |
-| `sdevice_iv_des.cmd` | Reverse I-V to −60 V with Avalanche(GradQuasiFermi), BreakCriteria 1e-9 A/µm | **Not run yet**. If it fails to converge, add `Resistor=` on the Anode (external-resistor method, sd §11.5). Put it in a separate SWB project. |
-| `svisual_iv_vis.tcl` | DOE columns IR15_nA, BV10uA_V, Vmax_V; writes `n@node@_iv.csv` | Not run yet. The curve names `"Anode InnerVoltage"` and `"Anode TotalCurrent"` are **inferred and unverified**; check them against the actual plt on the first run. |
+| `sdevice_iv_des.cmd` | Reverse I-V to −60 V with Avalanche(GradQuasiFermi), BreakCriteria 1e-9 A/µm | **Not run.** iter03 used the 0–15 V deck `iter03/sdevice_ir_15v_luyiming.cmd` instead. If it fails to converge, add `Resistor=` on the Anode (external-resistor method, sd §11.5). Put it in a separate SWB project. |
+| `svisual_iv_vis.tcl` | DOE columns IR15_nA, BV10uA_V, Vmax_V; writes `n@node@_iv.csv` | Used in iter03. The curve names `"Anode InnerVoltage"` / `"Anode TotalCurrent"` follow the manual pattern `"<contact> InnerVoltage"` / `"<contact> TotalCurrent"` (sv §6.2, GUI: sv §3.2 Data Selection panel → contact in the middle pane, quantity in the bottom pane). The contact name must match `Electrode { Name="Anode" }`. |
 
 **Unit conversions**
 - 1D (width 1 µm): C[pF @ 1 mm²] = c(a,a)[F/µm] × 1e18.
@@ -184,13 +187,20 @@ Note on HAsig 0.063: this σ is narrow, and whether it is achievable in a real p
 - 2026-09-29 (v4): iter00 C1V settled at **459 pF** (4.59e-16, SVisual probe; the 466 in the old log was wrong). The C1V_BIAS check: TCAD/raw-hand at 1 V = 1.009 (iter00), 1.018 (iter01), 1.011 (R), 1.014 (3G), mean ≈ 1.013, not 1.025. Proposed to change it; **not changed yet**, pending the user's OK.
 - 2026-09-29 (v5): full 0–15 V curves archived (`results/iter01`, `results/iter02`); new `tools/analyze_cv.py` (target rms, local n, profiled N(W), punch-through). R: rms 4.7%, n_max 3.29 @ 6.7 V (= hand), profiled Nepi 1.53e14 ✓, **punch-through ~10 V at Tepi 6** (C flat at 18.2 pF above it). Hand Q(1 V, 1 MHz): **R ≈ 295 at Tepi 6, ≈ 191 at Tepi 8 (< 200 spec)**, so Tepi 6 is what makes Q pass. Datasheet (Drive): Q ≥ 200 @ 1 V 1 MHz; I_R ≤ 50 nA @ 15 V; V_R ≥ 15 V @ 10 µA.
 - 2026-09-29 (v6): the user confirmed that **Tepi 6 was chosen for Q**. The user wants to keep improving the parameters before writing 6.x. Added the MATLAB analysis (`matlab/run_analysis.m`, `analyze_cv.m`, `analyze_iv.m`, README with the export list) and `sentaurus/svisual_vis_v3.tcl` (a(a,a) → Q, doping cut). The rms definition is now a 0.05 V grid in both Python and MATLAB (R 5.0%, 3G 3.7%). Figures are in `results/iter02/iter02_cv_*.png`.
+- 2026-09-29 (v7): root README with a per-file guide; merged into main via PR #2 (merge commit, so every vN stays in the history).
+- 2026-09-29 (v8): **TCAD Q = 262.2 / 362.2 / 400.4 (iter01 / R / 3G)**. Added a calibrated `handcalc.q_estimate` (`--q`). **Correction of v5:** R at Tepi 8 would give Q ≈ 214 (pass, 7% margin), not 191 (fail). Tepi 6 is kept for its 1.8× Q margin. Going below 6 µm is not useful, because punch-through would move toward 8 V.
+- 2026-09-29 (v9): **reverse I-V done (results/iter03).** IR15 = 1.436 / 1.255 / **1.224 nA** (iter01 / 3G / R) against the ≤ 50 nA spec. BV10uA = −1 for all three, meaning 10 µA is not reached in the sweep, so BV > Vmax. **Still need Vmax_V** to state BV > 60 V. I_R is SRH generation (implied τ_g ≈ 7–8 µs, I_R ∝ W). The spec holds for τ_g above about 0.2 µs.
+- 2026-09-29 (v10): the I-V CSVs are archived. **They only go to 15 V**: the user ran 路一鸣's 0–15 V deck (`sentaurus/iter03/sdevice_ir_15v_luyiming.cmd`), not the 60 V `sdevice_iv_des.cmd`. So the "Vmax 60" was a misreading, and **BV is not determined**. The datasheet condition V_R ≥ 15 V at 10 µA is still met, because I(15 V) = 1.2 nA. The team position (路一鸣) is to not extrapolate BV beyond 15 V; a 1D BV would only be an edge-free upper bound. The I-V curve flattens above about 10 V for R/3G, which is the punch-through signature.
+- 2026-09-29 (v11): **manufacturability redesign (results/iter04).** R, 3G and iter01 cannot be built: the main-peak σ is below the P implant straggle (ΔRp ≈ 0.10 µm at about 300 keV), and σ² = ΔRp² + 2Dt. `tools/optimize_fab.py` searches with σ ≥ √(ΔRp² + 0.02²) and a modern tolerance set (dose ±3 %, Rp ±1.5 %, σ ±3 % dose-conserving, Nepi ±5 %, P⁺ junction ±3 %). **Recommended: P3** (3 P implants of 270/476/960 keV, predicted TCAD 484/183/78/24.3 pF, worst +0.262, Q ≈ 383, feasible even if ΔRp is 15 % above the table, tolerates σ +20 %). Alternatives: F3 (best shape, needs the table ΔRp) and P2 (2 implants). **All are now limited by the P⁺ junction depth** (HA peak ≈ 0.03–0.05 µm under x_j). Next: sprocess straggle check (`sentaurus/iter04/sprocess_Pstraggle_fps.cmd` + `tools/fit_implant.py`) and a 1D TCAD batch from `sentaurus/iter04_params.csv` (P3 first).
+- 2026-09-29 (v12): **2D plan (results/iter05):** three runs of R. A = C-V at Wwin 20, B = C-V at Wwin 40 (A + B give the area/edge split via `compare_2D_1D.m`), C = I-V 0–15 V at Wwin 20 (edge leakage and corner field). The per-window DOE values include the edge term and are expected to look "out of spec"; only Ca vs 1D and the 1 mm² projection count.
 - Versioning: one commit per version on the working branch, message prefix `vN:` (git tag push is blocked by the remote, 403).
 
 **Next steps, in priority order**
 1. ~~Run R and 3G in 1D TCAD~~ ✅ v3: R chosen (Tepi 6).
 2. ~~Regenerate the missing 1D CSVs~~ ✅ v5 for iter01 and iter02. iter00 still only has `iter00_cv_vs_target.csv` (checkpoints), which is enough.
-3. **Reverse I-V on the final design** (separate SWB project): BV, I_R at 15 V, and whether punch-through affects them.
-4. **Q extraction**: Q = ω·c(a,a)/a(a,a) at 1 V, 1 MHz, taken from the existing acplot. No new sdevice run is needed; only svisual has to add the a(a,a) curve (confirm the name in the plt/sd manual). Substrate truncation is negligible (≈0.1 mΩ). Hand estimate R ≈ 295.
+3. ~~Reverse I-V~~ ✅ v9/v10: R I_R(15 V) = 1.224 nA, and 10 µA is not reached by 15 V (0–15 V deck). Optional: run the 60 V deck for an "ideal 1D" BV. Push the exact I-V deck you ran.
+4. ~~Q extraction~~ ✅ v8: R Q(1 V) = 362.2 (spec ≥ 200). For new candidates use `python3 handcalc.py --q <design> <Tepi>`.
+4b. **iter04 (manufacturable redesign):** 1D TCAD of P3 / F3 / P2 from `sentaurus/iter04_params.csv`, then pick the final design. Only then do the 2D run. (The user said on 2026-09-29 that the process part is **not required for the current deliverable**. So the sprocess ΔRp check and the process recipe are optional, and the SDE parameters are what matters.)
 5. **2D confirmation of the final design**: windows 20 and 40 µm with `sde2D_param_dvs.cmd`. **Before running sdevice, look at the doping in SVisual to confirm the parameters took effect.**
 6. Temperature C-V (optional) and a sensitivity study (the tornado plot can be drawn from `handcalc.robust()`).
 7. By 10/11: documents 6.1–6.4. Material mapping:
@@ -221,6 +231,8 @@ Note on HAsig 0.063: this σ is narrow, and whether it is achievable in a real p
 ├── CLAUDE.md                ← this file (repo path: 微电子器件设计/)
 ├── tools/check_cv.py        ← TCAD C1/3/5/8 → checkpoint margins, TCAD vs hand
 ├── tools/analyze_cv.py      ← full C-V csv → target rms, local n, N(W), punch-through, Q
+├── tools/optimize_fab.py    ← manufacturability-constrained search + process recipe (iter04)
+├── tools/fit_implant.py     ← Rp / dRp / 2Dt from sprocess .plx
 ├── handcalc.py              ← hand model (numpy + scipy)
 ├── sentaurus/               ← current SWB scripts (see §4)
 ├── matlab/
