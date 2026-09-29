@@ -177,6 +177,7 @@ Note on HAsig 0.063: this σ is narrow, and whether it is achievable in a real p
 
 **Session log**
 - 2026-09-29 (Claude Code, v1): repo only had README → archived CLAUDE.md as v0; added `tools/check_cv.py` (checkpoint margin + TCAD vs hand deviation) and `results/iter02/README.md` (SWB check table, pre-run checklist, blank results table). R/3G TCAD **not run yet**. 4.2/4.3 submitted by teammates. Waiting for user to push VM files (handcalc.py, sentaurus/, matlab/, results/).
+- 2026-09-29 (v2): user uploaded the VM files → everything consolidated under `微电子器件设计/` (repo root keeps only README). Review of the uploaded scripts: `handcalc.py` reproduces §5 exactly (R worst +0.214, 3G +0.134, punch-through 15.5 V). `sde1D_param_dvs.cmd` has the 12 `@..@` params matching the iter02 table. Open points: (a) `results/iter00/iter00_cv_vs_target.csv` says C1V = 4.59e-16 (459 pF, ratio 17.39), while `results_log.csv` says 4.6591e-16 (466, ratio 17.64); the iter00 svisual re-run will settle it. (b) The I-V run uses the default SRH lifetime, so I_R@15 V scales with an unchosen τ; state the τ when quoting I_R. (c) `claude-legacy-project-memory-*.md` was emptied by the user on purpose; do not restore it.
 - Versioning: one commit per version on the working branch, message prefix `vN:` (git tag push is blocked by the remote, 403).
 
 **Next steps, in priority order**
@@ -211,7 +212,8 @@ Note on HAsig 0.063: this σ is narrow, and whether it is achievable in a real p
 
 ```
 1SV149/
-├── CLAUDE.md                ← this file
+├── CLAUDE.md                ← this file (repo path: 微电子器件设计/)
+├── tools/check_cv.py        ← TCAD C1/3/5/8 → checkpoint margins, TCAD vs hand
 ├── handcalc.py              ← hand model (numpy + scipy)
 ├── sentaurus/               ← current SWB scripts (see §4)
 ├── matlab/

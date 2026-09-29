@@ -21,7 +21,7 @@
 | Tepi    | 8      | 8      | ☐ | ☐ |
 | PPdep   | 0.297  | 0.297  | ☐ | ☐ |
 
-The SWB column names must match the `@..@` names in `sde1D_param_dvs.cmd`. Diff the repo copy against the VM copy first.
+The SWB column names must match the `@..@` names in `sde1D_param_dvs.cmd`: HApeak HApos HAsig HA2peak HA2pos HA2sig HA3peak HA3pos HA3sig Nepi Tepi PPdep (12 in total; checked against the uploaded script on 2026-09-29). To switch a layer off, enter **1e10** for its peak and not 0. `results_log.csv` writes 0 for "absent", but only 1e10 has been used in SDE so far.
 
 ## 2. Pre-run checklist
 
