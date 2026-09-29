@@ -76,7 +76,8 @@ def perturbations_modern(d):
             elif k.endswith("pos"):
                 p[k] *= 1 + 0.015 * s
             elif k.endswith("sig"):
-                p[k] *= 1 + 0.03 * s
+                p[k] *= 1 + 0.03 * s                   # anneal variation conserves the dose
+                p[k.replace("sig", "peak")] /= 1 + 0.03 * s
             else:
                 p[k] *= 1 + 0.03 * s
             out.append((f"{k}{'+' if s > 0 else '-'}", p))

@@ -189,6 +189,7 @@ Note on HAsig 0.063: this σ is narrow, and whether it is achievable in a real p
 - 2026-09-29 (v8): **TCAD Q = 262.2 / 362.2 / 400.4 (iter01 / R / 3G)**. Added a calibrated `handcalc.q_estimate` (`--q`). **Correction of v5:** R at Tepi 8 would give Q ≈ 214 (pass, 7% margin), not 191 (fail). Tepi 6 is kept for its 1.8× Q margin. Going below 6 µm is not useful, because punch-through would move toward 8 V.
 - 2026-09-29 (v9): **reverse I-V done (results/iter03).** IR15 = 1.436 / 1.255 / **1.224 nA** (iter01 / 3G / R) against the ≤ 50 nA spec. BV10uA = −1 for all three, meaning 10 µA is not reached in the sweep, so BV > Vmax. **Still need Vmax_V** to state BV > 60 V. I_R is SRH generation (implied τ_g ≈ 7–8 µs, I_R ∝ W). The spec holds for τ_g above about 0.2 µs.
 - 2026-09-29 (v10): the I-V CSVs are archived. **They only go to 15 V**: the user ran 路一鸣's 0–15 V deck (`sentaurus/iter03/sdevice_ir_15v_luyiming.cmd`), not the 60 V `sdevice_iv_des.cmd`. So the "Vmax 60" was a misreading, and **BV is not determined**. The datasheet condition V_R ≥ 15 V at 10 µA is still met, because I(15 V) = 1.2 nA. The team position (路一鸣) is to not extrapolate BV beyond 15 V; a 1D BV would only be an edge-free upper bound. The I-V curve flattens above about 10 V for R/3G, which is the punch-through signature.
+- 2026-09-29 (v11): **manufacturability redesign (results/iter04).** R, 3G and iter01 cannot be built: the main-peak σ is below the P implant straggle (ΔRp ≈ 0.10 µm at about 300 keV), and σ² = ΔRp² + 2Dt. `tools/optimize_fab.py` searches with σ ≥ √(ΔRp² + 0.02²) and a modern tolerance set (dose ±3 %, Rp ±1.5 %, σ ±3 % dose-conserving, Nepi ±5 %, P⁺ junction ±3 %). **Recommended: P3** (3 P implants of 270/476/960 keV, predicted TCAD 484/183/78/24.3 pF, worst +0.262, Q ≈ 383, feasible even if ΔRp is 15 % above the table, tolerates σ +20 %). Alternatives: F3 (best shape, needs the table ΔRp) and P2 (2 implants). **All are now limited by the P⁺ junction depth** (HA peak ≈ 0.03–0.05 µm under x_j). Next: sprocess straggle check (`sentaurus/iter04/sprocess_Pstraggle_fps.cmd` + `tools/fit_implant.py`) and a 1D TCAD batch from `sentaurus/iter04_params.csv` (P3 first).
 - Versioning: one commit per version on the working branch, message prefix `vN:` (git tag push is blocked by the remote, 403).
 
 **Next steps, in priority order**
@@ -196,6 +197,7 @@ Note on HAsig 0.063: this σ is narrow, and whether it is achievable in a real p
 2. ~~Regenerate the missing 1D CSVs~~ ✅ v5 for iter01 and iter02. iter00 still only has `iter00_cv_vs_target.csv` (checkpoints), which is enough.
 3. ~~Reverse I-V~~ ✅ v9/v10: R I_R(15 V) = 1.224 nA, and 10 µA is not reached by 15 V (0–15 V deck). Optional: run the 60 V deck for an "ideal 1D" BV. Push the exact I-V deck you ran.
 4. ~~Q extraction~~ ✅ v8: R Q(1 V) = 362.2 (spec ≥ 200). For new candidates use `python3 handcalc.py --q <design> <Tepi>`.
+4b. **iter04 (manufacturable redesign):** sprocess ΔRp check, then 1D TCAD of P3 / F3 / P2 → pick the final design. Only then do the 2D run.
 5. **2D confirmation of the final design**: windows 20 and 40 µm with `sde2D_param_dvs.cmd`. **Before running sdevice, look at the doping in SVisual to confirm the parameters took effect.**
 6. Temperature C-V (optional) and a sensitivity study (the tornado plot can be drawn from `handcalc.robust()`).
 7. By 10/11: documents 6.1–6.4. Material mapping:
@@ -226,6 +228,8 @@ Note on HAsig 0.063: this σ is narrow, and whether it is achievable in a real p
 ├── CLAUDE.md                ← this file (repo path: 微电子器件设计/)
 ├── tools/check_cv.py        ← TCAD C1/3/5/8 → checkpoint margins, TCAD vs hand
 ├── tools/analyze_cv.py      ← full C-V csv → target rms, local n, N(W), punch-through, Q
+├── tools/optimize_fab.py    ← manufacturability-constrained search + process recipe (iter04)
+├── tools/fit_implant.py     ← Rp / dRp / 2Dt from sprocess .plx
 ├── handcalc.py              ← hand model (numpy + scipy)
 ├── sentaurus/               ← current SWB scripts (see §4)
 ├── matlab/

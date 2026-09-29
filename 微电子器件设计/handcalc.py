@@ -57,6 +57,15 @@ DESIGNS = {
                HA3peak=1.0e15, HA3pos=0.88, HA3sig=0.80, Nepi=1.5e14),
     "3G": dict(HApeak=7.0e16, HApos=0.38, HAsig=0.075, HA2peak=7.7e15, HA2pos=0.51, HA2sig=0.26,
                HA3peak=9.5e14, HA3pos=1.0, HA3sig=0.8, Nepi=1.6e14),
+    # iter04 P3: manufacturable (sigma >= implant straggle), tools/optimize_fab.py; evaluate with Tepi=6
+    "P3": dict(HApeak=7.67e+16, HApos=0.341, HAsig=0.11, HA2peak=3.41e+15, HA2pos=0.582, HA2sig=0.345,
+               HA3peak=8.67e+14, HA3pos=1.09, HA3sig=0.584, Nepi=1.75e+14),
+    # iter04 F3: manufacturable (sigma >= implant straggle), tools/optimize_fab.py; evaluate with Tepi=6
+    "F3": dict(HApeak=6.75e+16, HApos=0.368, HAsig=0.103, HA2peak=3.52e+15, HA2pos=0.538, HA2sig=0.385,
+               HA3peak=8.19e+14, HA3pos=0.804, HA3sig=0.981, Nepi=1.33e+14),
+    # iter04 P2: manufacturable (sigma >= implant straggle), tools/optimize_fab.py; evaluate with Tepi=6
+    "P2": dict(HApeak=7.2e+16, HApos=0.343, HAsig=0.12, HA2peak=3.04e+15, HA2pos=0.437, HA2sig=0.705,
+               HA3peak=1e+10, HA3pos=1.0, HA3sig=0.8, Nepi=1.89e+14),
     "2G": dict(HApeak=7.4e16, HApos=0.34, HAsig=0.11, HA2peak=4.2e15, HA2pos=0.50, HA2sig=0.54,
                HA3peak=1e10, HA3pos=1.0, HA3sig=0.8, Nepi=2.6e14),
 }
