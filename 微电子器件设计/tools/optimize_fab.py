@@ -34,8 +34,11 @@ DRP_UM = np.array([.0069, .0119, .0166, .0256, .0456, .0631, .0775, .1002, .1172
 TCAD = {"R": [490.42, 195.61, 79.509, 24.778], "3G": [484.08, 191.59, 76.946, 26.210]}
 
 
+DRP_SCALE = 1.0       # >1: pessimistic straggle (table uncertainty above 200 keV)
+
+
 def drp(pos):
-    return np.interp(pos, RP_UM, DRP_UM)
+    return DRP_SCALE * np.interp(pos, RP_UM, DRP_UM)
 
 
 def sig_min(pos):
@@ -175,7 +178,8 @@ def run(layers, maxiter, seed, out, x0=None):
     res = differential_evolution(objective, b, args=(layers,), maxiter=maxiter, popsize=12, x0=x0,
                                  seed=seed, tol=1e-6, polish=False, updating="deferred", workers=1)
     d = design(res.x, layers)
-    json.dump({"layers": layers, "seed": seed, "tol": TOL_SET, "w_rms": W_RMS, "fun": res.fun, "design": d},
+    json.dump({"layers": layers, "seed": seed, "tol": TOL_SET, "w_rms": W_RMS, "drp_scale": DRP_SCALE,
+               "fun": res.fun, "design": d},
               open(out, "w"), indent=1)
     print(f"done: layers {layers} seed {seed} objective {res.fun:+.4f} -> {out}")
 
@@ -232,8 +236,9 @@ if __name__ == "__main__":
     ap.add_argument("--tol", default="legacy", choices=list(TOL))
     ap.add_argument("--w-rms", type=float, default=0.0)
     ap.add_argument("--x0", help="json of a previous result to seed the population")
+    ap.add_argument("--drp-scale", type=float, default=1.0)
     a = ap.parse_args()
-    TOL_SET, W_RMS = a.tol, a.w_rms
+    TOL_SET, W_RMS, DRP_SCALE = a.tol, a.w_rms, a.drp_scale
     if a.report:
         report(a.report)
     else:

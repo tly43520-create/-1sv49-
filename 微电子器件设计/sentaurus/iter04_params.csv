@@ -1,0 +1,5 @@
+# SWB table rows for sde1D_param_dvs.cmd, iter04 manufacturable candidates (tools/optimize_fab.py, modern tolerances). HA3peak 1e10 = off
+case,Tepi,Nepi,PPdep,HApeak,HApos,HAsig,HA2peak,HA2pos,HA2sig,HA3peak,HA3pos,HA3sig
+iter04-F3,6.0,1.33e+14,0.297,6.75e+16,0.368,0.103,3.52e+15,0.538,0.385,8.19e+14,0.804,0.981
+iter04-F2,6.0,2.06e+14,0.297,6.55e+16,0.373,0.107,3.41e+15,0.461,0.626,1e+10,1.0,0.8
+iter04-F3b,6.0,1.95e+14,0.297,7.68e+16,0.351,0.103,3.5e+15,0.693,0.264,7.93e+14,1.02,0.63
