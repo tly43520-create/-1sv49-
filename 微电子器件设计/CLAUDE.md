@@ -197,7 +197,7 @@ Note on HAsig 0.063: this σ is narrow, and whether it is achievable in a real p
 2. ~~Regenerate the missing 1D CSVs~~ ✅ v5 for iter01 and iter02. iter00 still only has `iter00_cv_vs_target.csv` (checkpoints), which is enough.
 3. ~~Reverse I-V~~ ✅ v9/v10: R I_R(15 V) = 1.224 nA, and 10 µA is not reached by 15 V (0–15 V deck). Optional: run the 60 V deck for an "ideal 1D" BV. Push the exact I-V deck you ran.
 4. ~~Q extraction~~ ✅ v8: R Q(1 V) = 362.2 (spec ≥ 200). For new candidates use `python3 handcalc.py --q <design> <Tepi>`.
-4b. **iter04 (manufacturable redesign):** sprocess ΔRp check, then 1D TCAD of P3 / F3 / P2 → pick the final design. Only then do the 2D run.
+4b. **iter04 (manufacturable redesign):** 1D TCAD of P3 / F3 / P2 from `sentaurus/iter04_params.csv`, then pick the final design. Only then do the 2D run. (The user said on 2026-09-29 that the process part is **not required for the current deliverable**. So the sprocess ΔRp check and the process recipe are optional, and the SDE parameters are what matters.)
 5. **2D confirmation of the final design**: windows 20 and 40 µm with `sde2D_param_dvs.cmd`. **Before running sdevice, look at the doping in SVisual to confirm the parameters took effect.**
 6. Temperature C-V (optional) and a sensitivity study (the tornado plot can be drawn from `handcalc.robust()`).
 7. By 10/11: documents 6.1–6.4. Material mapping:
