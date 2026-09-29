@@ -27,8 +27,9 @@ for k = 1:numel(cases)
     BV = V(ib-1) + (log(Ibv)-log(I(ib-1)))/(log(I(ib))-log(I(ib-1)))*(V(ib)-V(ib-1));
   end
   S(k).name = cases(k).name; S(k).IR15_nA = I15*1e9; S(k).BV10uA_V = BV; S(k).Vmax = V(end);
-  fprintf('== %s: I_R(15 V) = %.3g nA (spec <= 50, %s); BV(10 uA) = %.2f V (spec >= 15, %s); sweep to %.1f V\n', ...
-          cases(k).name, S(k).IR15_nA, pf(I15 <= IRmax), BV, pf(isnan(BV) || BV >= VRmax), V(end));
+  if isnan(BV), bvs = sprintf('> %.1f V (10 uA not reached)', V(end)); else, bvs = sprintf('%.2f V', BV); end
+  fprintf('== %s: I_R(15 V) = %.3g nA (spec <= 50, %s); BV(10 uA) %s (spec >= 15, %s); sweep to %.1f V\n', ...
+          cases(k).name, S(k).IR15_nA, pf(I15 <= IRmax), bvs, pf(isnan(BV) || BV >= VRmax), V(end));
   semilogy(V, I, '-', 'Color', col(k,:), 'LineWidth', 1.5, 'DisplayName', cases(k).name);
 end
 xl = get(gca, 'XLim');
