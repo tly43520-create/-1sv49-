@@ -54,7 +54,39 @@ XC = np.linspace(0, 8e-4, 16001)
 
 def cap(d, V=h.VCK):
     h._x, h._dx = XC, XC[1] - XC[0]
-    return h.cap_pF(d, V, Tepi=TEPI, x=XC)
+    kw = {"PPsig": d["PPsig"]} if "PPsig" in d else {}
+    return h.cap_pF(d, V, Tepi=TEPI, x=XC, **kw)
+
+
+def perturbations_modern(d):
+    """Typical modern-process tolerances (assumption, to be cited from a process textbook):
+    implant dose +-3 % (peak), implant energy +-1.5 % (Rp -> position, relative), anneal
+    temperature +-3 C (-> sigma +-3 %), epi doping +-5 %, P+ junction depth +-3 % (PPsig)."""
+    out = []
+    for k in h.KEYS:
+        if d.get(k.replace("pos", "peak").replace("sig", "peak"), 1) < 1e12:
+            continue                                   # layer switched off
+        for s in (-1, 1):
+            p = dict(d)
+            if k == "Nepi":
+                p[k] *= 1 + 0.05 * s
+            elif k.endswith("pos"):
+                p[k] *= 1 + 0.015 * s
+            elif k.endswith("sig"):
+                p[k] *= 1 + 0.03 * s
+            else:
+                p[k] *= 1 + 0.03 * s
+            out.append((f"{k}{'+' if s > 0 else '-'}", p))
+    for s in (-1, 1):
+        p = dict(d)
+        p["PPsig"] = 0.08 * (1 + 0.03 * s)
+        out.append((f"PPsig{'+' if s > 0 else '-'}", p))
+    return out
+
+
+TOL = {"legacy": h.perturbations, "modern": perturbations_modern}
+TOL_SET = "legacy"
+W_RMS = 0.0            # weight of max(0, rms - 5 %) in the objective
 
 
 MU = lambda N: 68.5 + (1414 - 68.5) / (1 + (N / 9.2e16)**0.711)
@@ -102,9 +134,9 @@ def design(v, layers):
     return d
 
 
-def worst_margin(d, return_all=False):
+def worst_margin(d, return_all=False, tol=None):
     ms = [h.margins(cap(d) * CORR).min()]
-    for _, p in h.perturbations(d):
+    for _, p in TOL[tol or TOL_SET](d):
         ms.append(h.margins(cap(p) * CORR).min())
     return (min(ms), ms) if return_all else min(ms)
 
@@ -122,16 +154,29 @@ def objective(v, layers):
             pen += 0.002 * (Q_MIN - q)
         if h.margins(C).min() < 0:          # nominal fails: skip the 20 perturbations
             return -h.margins(C).min() + 1.0 + pen
+        if W_RMS:
+            pen += W_RMS * max(0.0, h.rms_vs_target(d, Tepi=TEPI, x=XC) - 0.05)
         return -worst_margin(d) + pen
     except Exception:
         return 10.0
 
 
-def run(layers, maxiter, seed, out):
-    res = differential_evolution(objective, bounds(layers), args=(layers,), maxiter=maxiter, popsize=12,
+def vector(d, layers):
+    v = []
+    for L in ["HA", "HA2", "HA3"][:layers]:
+        v += [np.log10(d[L + "peak"]), d[L + "pos"], max(d[L + "sig"] - sig_min(d[L + "pos"]), 0.0)]
+    return np.array(v + [np.log10(d["Nepi"])])
+
+
+def run(layers, maxiter, seed, out, x0=None):
+    b = bounds(layers)
+    if x0 is not None:
+        x0 = np.clip(x0, [lo for lo, _ in b], [hi for _, hi in b])
+    res = differential_evolution(objective, b, args=(layers,), maxiter=maxiter, popsize=12, x0=x0,
                                  seed=seed, tol=1e-6, polish=False, updating="deferred", workers=1)
     d = design(res.x, layers)
-    json.dump({"layers": layers, "seed": seed, "fun": res.fun, "design": d}, open(out, "w"), indent=1)
+    json.dump({"layers": layers, "seed": seed, "tol": TOL_SET, "w_rms": W_RMS, "fun": res.fun, "design": d},
+              open(out, "w"), indent=1)
     print(f"done: layers {layers} seed {seed} objective {res.fun:+.4f} -> {out}")
 
 
@@ -140,10 +185,12 @@ def report(path):
     d = r["design"]
     C = cap(d) * CORR
     wm, ms = worst_margin(d, return_all=True)
-    names = [n for (n, _) in h.perturbations(d)]
+    names = [n for (n, _) in TOL[TOL_SET](d)]
+    wl = worst_margin(d, tol="legacy" if TOL_SET == "modern" else "modern")
     print(f"== {path}  ({r['layers']} N layers, Tepi {TEPI})")
     print("predicted TCAD C1/3/5/8 = " + " / ".join(f"{c:.1f}" for c in C) +
-          f" pF  C1/C8 {C[0]/C[3]:.2f}  margin {h.margins(C).min():+.3f}  worst {wm:+.3f} ({(['nominal'] + names)[int(np.argmin(ms))]})")
+          f" pF  C1/C8 {C[0]/C[3]:.2f}  margin {h.margins(C).min():+.3f}  worst[{TOL_SET}] {wm:+.3f} ({(['nominal'] + names)[int(np.argmin(ms))]})"
+          f"  worst[{'legacy' if TOL_SET == 'modern' else 'modern'}] {wl:+.3f}")
     print(f"calibrated Q(1 V) ~ {q1v(d):.0f}   rms vs target (hand) {100*h.rms_vs_target(d, Tepi=TEPI, x=XC):.1f}%")
     print(f"{'layer':5s} {'peak':>9s} {'pos':>5s} {'sigma':>6s} {'sig_min':>7s} {'E[keV]':>7s} {'dose[cm-2]':>10s} {'2Dt[um2]':>9s}")
     rows = []
@@ -182,8 +229,13 @@ if __name__ == "__main__":
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--out", default="opt.json")
     ap.add_argument("--report")
+    ap.add_argument("--tol", default="legacy", choices=list(TOL))
+    ap.add_argument("--w-rms", type=float, default=0.0)
+    ap.add_argument("--x0", help="json of a previous result to seed the population")
     a = ap.parse_args()
+    TOL_SET, W_RMS = a.tol, a.w_rms
     if a.report:
         report(a.report)
     else:
-        run(a.layers, a.maxiter, a.seed, a.out)
+        x0 = vector(json.load(open(a.x0))["design"], a.layers) if a.x0 else None
+        run(a.layers, a.maxiter, a.seed, a.out, x0)
