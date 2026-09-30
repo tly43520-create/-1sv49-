@@ -31,3 +31,25 @@
 ## Files to put here afterwards
 
 `iter05-A_cv.csv`, `iter05-B_cv.csv`, `iter05-A_dop.csv`, `iter05-C_iv.csv`, the DOE screenshots, the E-field screenshot (run C, −15 V), the snmesh point counts, and the `compare_2D_1D.csv` output.
+
+## Results (2026-09-30, first batch)
+
+| DOE row | IR15_nA | C1V_raw | C3V_raw | C5V_raw | C8V_raw | C*_pF (÷Wwin) | Ratio18 | verdict |
+|---|---|---|---|---|---|---|---|---|
+| Wwin 20 (runs A + C) | 1.372 | 1.0281e-14 | 4.3112e-15 | 1.9760e-15 | 8.8682e-16 | 514.05 / 215.56 / 98.80 / 44.34 | 11.593 | **valid** |
+| "Wwin 40" (run B) | 0.6862 | 1.0281e-14 | 4.3112e-15 | 1.9760e-15 | 8.8682e-16 | 257.02 / 107.78 / 49.40 / 22.17 | 11.593 | **INVALID: identical raw values** |
+
+**Run B is invalid.** All raw values, and therefore the device simulation, are identical to run A. Only the ÷Wwin in svisual changed, and IR15 is exactly half. Probable cause: in the SWB tree the `Wwin` parameter sits at the svisual step (or the VM still has the old hard-coded `sde2D_param_dvs.cmd`), so sde and sdevice ran only once. **Fix:** put Wwin in the **sde** step, so that two sde nodes exist, check that the structure is 50 µm wide and that snmesh reports a different point count, then re-run. Expected valid run B (from run A + 1D): raw 2.009e-14 / 8.223e-15 / 3.566e-15 / 1.382e-15 F/µm, ÷40 = 502.2 / 205.6 / 89.2 / 34.6 pF, ratio 14.5. Anything close to the row above means it is still wrong.
+
+### Analysis of run A (area term taken from 1D iter02-R; run B would check this assumption)
+
+| V_R | 2D ÷ W [pF] | 1D [pF] | edge share (W 20) | Ce [F/µm per edge] |
+|---|---|---|---|---|
+| 1 | 514.0 | 490.4 | 4.6 % | 2.36e-16 |
+| 3 | 215.6 | 195.6 | 9.3 % | 2.00e-16 |
+| 5 | 98.8 | 79.5 | 19.5 % | 1.93e-16 |
+| 8 | 44.3 | 24.8 | 44.1 % | 1.96e-16 |
+
+- Ce ≈ 2e-16 F/µm per edge, nearly independent of voltage. This matches iter00-2D, which had different doping, so the edge term is a property of the junction edge geometry.
+- **Projected 1 mm² square die** (perimeter 4000 µm): 491.4 / 196.4 / 80.3 / 25.6 pF, C1/C8 19.22, margin +0.390, **all four pass**. The edge share is 0.2 % (1 V) → 3.1 % (8 V), which confirms that designing in 1D is valid (§3). The straight-edge 2D approximation ignores the four die corners.
+- **Run C (I-V):** IR15 = 1.372 nA per 20 µm stripe, compared with 1.224 nA in 1D. The edge leakage is 1.5e-15 A/µm per edge, which is about 0.006 nA for a 1 mm² die. **The die I_R(15 V) is about 1.23 nA.** Still to do: screenshot of the ElectricField map at −15 V (corner field).
