@@ -1,0 +1,52 @@
+category,variable,unit,W20,W40,die_1mm2,source_note
+input_swb,Wwin,um,20,40,1000 (side),SWB parameter at the sde step; P+ window width
+input_swb,Tepi,um,6.0,6.0,6.0,N- epi thickness
+input_swb,Nepi,cm^-3,1.5e14,1.5e14,1.5e14,epi doping (phosphorus)
+input_swb,PPdep,um,0.297,0.297,0.297,"P+ junction depth (Junction 1e17 @ 0.297, sigma 0.08)"
+input_swb,HApeak,cm^-3,7.3e16,7.3e16,7.3e16,"hyperabrupt Gaussian 1, peak"
+input_swb,HApos,um,0.40,0.40,0.40,"Gaussian 1, peak position"
+input_swb,HAsig,um,0.063,0.063,0.063,"Gaussian 1, sigma"
+input_swb,HA2peak,cm^-3,7.6e15,7.6e15,7.6e15,"Gaussian 2, peak"
+input_swb,HA2pos,um,0.54,0.54,0.54,"Gaussian 2, peak position"
+input_swb,HA2sig,um,0.25,0.25,0.25,"Gaussian 2, sigma"
+input_swb,HA3peak,cm^-3,1.0e15,1.0e15,1.0e15,"Gaussian 3, peak"
+input_swb,HA3pos,um,0.88,0.88,0.88,"Gaussian 3, peak position"
+input_swb,HA3sig,um,0.80,0.80,0.80,"Gaussian 3, sigma"
+input_fixed,Xw1,um,5.0,5.0,,window left edge = oxide-covered side margin
+input_fixed,Xw2,um,25.0,45.0,,Xw1 + Wwin
+input_fixed,Wtot,um,30.0,50.0,,total simulated width = Xw2 + 5
+input_fixed,Tox,um,0.5,0.5,,passivation oxide thickness
+input_fixed,Ytot,um,8.0,8.0,,Tepi + 2 um truncated N+ substrate
+input_fixed,Nsub,cm^-3,1e19,1e19,1e19,N+ substrate doping
+input_fixed,PPpeak,cm^-3,1e20,1e20,1e20,P+ surface peak
+input_fixed,AreaFactor,um,1,1,,sdevice default z-width (sd tutorial section 3); results per um
+setting,f_ac,Hz,1e6,1e6,,sdevice_des.cmd small-signal AC frequency
+setting,V_sweep_CV,V,0 to -15,0 to -15,,C-V sweep (va.dc)
+setting,V_sweep_IV,V,0 to -15,0 to -15,,"sdevice_ir15_des.cmd, T = 298.15 K, SRH(DopingDep)+Auger+Avalanche(GradQuasiFermi)"
+output_doe,C1V_raw,F/um,1.0281e-14,2.0092e-14,,"c(a,a) at V_R = 1 V, whole window, per um of z"
+output_doe,C3V_raw,F/um,4.3112e-15,8.2255e-15,,
+output_doe,C5V_raw,F/um,1.9760e-15,3.5675e-15,,
+output_doe,C8V_raw,F/um,8.8682e-16,1.3826e-15,,
+output_doe,C1V_pF,pF@1mm2,514.05,502.29,491.49,raw / Wwin * 1e18 (includes the edge term); die column = Ca*A + Ce*4*sqrt(A)
+output_doe,C3V_pF,pF@1mm2,215.56,205.64,196.51,
+output_doe,C5V_pF,pF@1mm2,98.80,89.19,80.34,
+output_doe,C8V_pF,pF@1mm2,44.34,34.57,25.57,
+output_doe,Ratio18,-,11.593,14.532,19.22,C1V / C8V
+output_doe,Q1V,-,517.3,447.0,~370,"2*pi*f*C/G at 1 V; 2D values inflated by lateral spreading, die value from 1D (362.2) + ~2 % spreading"
+output_doe,IR15_nA,nA@1mm2,1.372,1.299,1.232,|I| at V_R = 15 V scaled by 1e6/Wwin (includes edge leakage)
+output_doe,BV10uA_V,V,> 15 (not reached),> 15 (not reached),> 15,10 uA not reached within the 0-15 V sweep; BV not determined
+derived,Ca_1V,pF/mm2,,,490.55,area term (C_W40 - C_W20)/20; 1D iter02-R 490.4 (+0.03 %)
+derived,Ca_3V,pF/mm2,,,195.72,1D 195.6 (+0.06 %)
+derived,Ca_5V,pF/mm2,,,79.58,1D 79.5 (+0.09 %)
+derived,Ca_8V,pF/mm2,,,24.79,1D 24.8 (-0.04 %)
+derived,Ce_1V,F/um per edge,,,2.350e-16,edge term (C_W20 - 20*Ca)/2
+derived,Ce_3V,F/um per edge,,,1.985e-16,
+derived,Ce_5V,F/um per edge,,,1.923e-16,
+derived,Ce_8V,F/um per edge,,,1.955e-16,
+derived,edge_share_1V,%,,,0.19,"Ce*perimeter / C_die, square die perimeter 4000 um"
+derived,edge_share_8V,%,,,3.06,
+derived,margin_min,-,,,+0.389,worst of the 4 checkpoints (8 V); all four pass
+derived,IR_area,nA/mm2,,,1.226,area term of leakage; 1D 1.224
+derived,IR_edge,A/um per edge,,,1.46e-15,edge term of leakage (~0.006 nA for the 1 mm2 die)
+derived,Rs_equiv,ohm@1mm2,0.599,0.709,~0.88,1/(2*pi*f*C*Q); 1D 0.896; fits R_1D*W/(W+2*delta) with delta 5.0-5.3 um
+derived,Emax_corner_15V,V/cm,TBD,,,P+ window corner peak field at V_R = 15 V: read from the ElectricField map (not yet recorded); 1D hand estimate ~2.6e5

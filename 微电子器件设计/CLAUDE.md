@@ -200,6 +200,7 @@ Note on HAsig 0.063: this σ is narrow, and whether it is achievable in a real p
 - 2026-09-30 (v14): **2D confirmation complete.** Run B was redone correctly (raw C1V 2.0092e-14, as predicted). Area term = 1D within 0.1 %; die C 491.5/196.5/80.3/25.6 pF, ratio 19.22, margin +0.389; die I_R 1.232 nA; die Q about 370. The 2D Q values are higher only because of lateral spreading (δ ≈ 5 µm = side margin). Still missing: 2D CSVs and the E-field screenshot.
 - 2026-09-30 (v15): the teacher asked for the device "thickness". It is the sdevice AreaFactor (sd §3: 2D width, default 1 µm), i.e. the junction area. It was derived from constraints: A ∈ [0.4, 1.34] mm² (breakdown vs Q). Kept at 1 mm² (1000 µm square).
 - 2026-09-30 (v16): **6.1–6.4 drafted as Claude Docs** (unfinished, so kept out of the repo and out of main; the link index is only in commit v16 153ffa8 on the working branch), with AreaFactor = 1 and 1 mm² conversion in post-processing. Placeholders 【…待补】 for figures and data; the missing items are the 2D corner E-field value and screenshot, and the P3 TCAD.
+- 2026-09-30 (v17): `results/iter05/iter05_R2D_all_variables.csv` gathers every variable of the R-2D runs (inputs, fixed geometry, settings, DOE outputs, derived Ca/Ce/die values). Emax_corner_15V is still TBD.
 - Versioning: one commit per version on the working branch, message prefix `vN:` (git tag push is blocked by the remote, 403).
 
 **Next steps, in priority order**

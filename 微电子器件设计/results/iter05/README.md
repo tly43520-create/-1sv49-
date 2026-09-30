@@ -77,3 +77,7 @@ The raw values differ now, and the Wwin 40 row matches the prediction made from 
 - **Leakage:** area term 1.226 nA/mm² (1D 1.224). Edge term 1.46e-15 A/µm per edge. **The die I_R(15 V) is 1.232 nA** (spec ≤ 50).
 - **Q:** the 2D Q is higher (517 at W 20, 447 at W 40, 362 in 1D). Converted to a series resistance per 1 mm²: 0.599 Ω (W 20) and 0.709 Ω (W 40), against 0.896 Ω in 1D. This fits R_2D = R_1D·W/(W + 2δ) with δ = 5.0–5.3 µm, which is **exactly the 5 µm oxide-covered side margin**. The neutral epi and substrate span the full silicon width, so the series current spreads laterally under the oxide, and the narrow test stripes overstate Q. For a 1 mm² die the spreading share is about 4δ/√A ≈ 2 %, so **Q(die) ≈ 370**, essentially the 1D value (spec ≥ 200). Use the 1D Q in the report and cite the 2D values only to show this spreading effect.
 - Still to archive: the CSVs (A/B C-V, C I-V, doping cut) and the E-field screenshot at −15 V (P⁺ window corner).
+
+## All variables in one table
+
+`iter05_R2D_all_variables.csv` (v17) lists every variable of the design-R 2D runs in long format: `category, variable, unit, W20, W40, die_1mm2, source_note`. It covers the SWB inputs, the constants fixed in `sde2D_param_dvs.cmd`, the sdevice settings, the DOE outputs (C-V and I-V), and the derived area/edge terms. `Emax_corner_15V` is still TBD, pending the E-field screenshot.
