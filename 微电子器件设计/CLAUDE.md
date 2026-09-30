@@ -199,6 +199,7 @@ Note on HAsig 0.063: this σ is narrow, and whether it is achievable in a real p
 - 2026-09-30 (v13): **2D results (results/iter05).** Run A (Wwin 20) is valid: Ce ≈ 2e-16 F/µm per edge, voltage-independent, same as iter00-2D. Projected 1 mm² die 491/196/80.3/25.6 pF, ratio 19.2, margin +0.39, all pass, edge share ≤ 3.1 %. Run C: die I_R(15 V) ≈ 1.23 nA (edge part about 0.006 nA). **Run B (Wwin 40) is invalid**: raw values are identical to A, so Wwin did not reach sde. It needs a re-run with Wwin at the sde step; expected raw C1V ≈ 2.01e-14.
 - 2026-09-30 (v14): **2D confirmation complete.** Run B was redone correctly (raw C1V 2.0092e-14, as predicted). Area term = 1D within 0.1 %; die C 491.5/196.5/80.3/25.6 pF, ratio 19.22, margin +0.389; die I_R 1.232 nA; die Q about 370. The 2D Q values are higher only because of lateral spreading (δ ≈ 5 µm = side margin). Still missing: 2D CSVs and the E-field screenshot.
 - 2026-09-30 (v15): the teacher asked for the device "thickness". It is the sdevice AreaFactor (sd §3: 2D width, default 1 µm), i.e. the junction area. It was derived from constraints: A ∈ [0.4, 1.34] mm² (breakdown vs Q). Kept at 1 mm² (1000 µm square).
+- 2026-09-30 (v16): **6.1–6.4 drafted as Claude Docs** (links in `docs/6.x_drafts.md`), with AreaFactor = 1 and 1 mm² conversion in post-processing. Placeholders 【…待补】 for figures and data; the missing items are the 2D corner E-field value and screenshot, and the P3 TCAD.
 - Versioning: one commit per version on the working branch, message prefix `vN:` (git tag push is blocked by the remote, 403).
 
 **Next steps, in priority order**
@@ -209,7 +210,7 @@ Note on HAsig 0.063: this σ is narrow, and whether it is achievable in a real p
 4b. **iter04 (manufacturable redesign):** 1D TCAD of P3 / F3 / P2 from `sentaurus/iter04_params.csv`, then pick the final design. Only then do the 2D run. (The user said on 2026-09-29 that the process part is **not required for the current deliverable**. So the sprocess ΔRp check and the process recipe are optional, and the SDE parameters are what matters.)
 5. ~~2D confirmation~~ ✅ v14 for R (results/iter05). Open: CSVs and the E-field screenshot. Previously: windows 20 and 40 µm with `sde2D_param_dvs.cmd`. **Before running sdevice, look at the doping in SVisual to confirm the parameters took effect.**
 6. Temperature C-V (optional) and a sensitivity study (the tornado plot can be drawn from `handcalc.robust()`).
-7. By 10/11: documents 6.1–6.4. Material mapping:
+7. By 10/11: documents 6.1–6.4 (**drafted v16**, see docs/6.x_drafts.md; fill the placeholders). Material mapping:
    - 6.1 ← §3 and the hand model
    - 6.2 ← results_log and the iteration READMEs
    - 6.3 ← robustness, σ achievability, the 2D edge effect, punch-through
