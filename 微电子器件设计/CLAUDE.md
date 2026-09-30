@@ -93,6 +93,8 @@
 - **TCAD Q (1 V, 1 MHz): iter01 262.2 (Tepi 8), R 362.2 and 3G 400.4 (Tepi 6); all pass ≥ 200.** The raw ∫ρdx hand model underestimates Q because TCAD's resistive neutral epi is about 0.65 µm (≈ 2 L_D) shorter. `handcalc.q_estimate()` subtracts this (`RS_OFFSET_UM`) and matches TCAD within 2%.
 - C-V only fixes the profile shape. The scale is set by two opposing trends: breakdown favours thick, while Q ∝ 1/k² favours thin.
 
+**Device thickness / junction area (AreaFactor):** C-V alone cannot fix A: the similarity scaling A → s·A, depths × s, N / s² leaves C(V) unchanged. A is bounded by Q ∝ 1/s² (A ≤ 1.34 mm²) and by breakdown E ∝ 1/s (A ≳ 0.4 mm² for an ideal 1D BV ≥ 2 × 15 V). **Chosen: A = 1 mm², a 1000 × 1000 µm square, z-width 1000 µm, equivalent to AreaFactor 1e6 in quasi-1D.** See `results/area_scaling_README.md` and `tools/area_scaling.py`.
+
 **Material:** a wider bandgap gives a larger V_bi, which reduces the capacitance ratio. **Si is the best choice.**
 
 **Hand model** (`handcalc.py`)
@@ -103,6 +105,7 @@
 **2D vs 1D**
 - With the window 20 µm wide, the edge share in 2D is 5% → 43%. The edge contributes about 2e-16 F/µm per edge and is roughly voltage-independent.
 - Projected onto a real 1 mm² die, the edge contributes < 3%. **So designing in 1D is valid**, and 2D is only used for final confirmation and edge analysis.
+- **Confirmed for design R (iter05, W 20/40):** the area term equals 1D within 0.1 %, Ce ≈ 2e-16 F/µm per edge, and the 1 mm² die gives 491.5/196.5/80.3/25.6 pF, all pass, edge share ≤ 3.1 %. Die I_R(15 V) is 1.232 nA. The 2D Q (447–517) is inflated by lateral current spreading under the 5 µm side margin; the die Q is about 370, equal to 1D.
 
 **Breakdown (hand estimate, candidate R)**
 - At 15 V, ∫α_p ≈ 0.004 and ∫α_n ≈ 0.05, far below 1, so avalanche will not happen.
@@ -193,6 +196,10 @@ Note on HAsig 0.063: this σ is narrow, and whether it is achievable in a real p
 - 2026-09-29 (v10): the I-V CSVs are archived. **They only go to 15 V**: the user ran 路一鸣's 0–15 V deck (`sentaurus/iter03/sdevice_ir_15v_luyiming.cmd`), not the 60 V `sdevice_iv_des.cmd`. So the "Vmax 60" was a misreading, and **BV is not determined**. The datasheet condition V_R ≥ 15 V at 10 µA is still met, because I(15 V) = 1.2 nA. The team position (路一鸣) is to not extrapolate BV beyond 15 V; a 1D BV would only be an edge-free upper bound. The I-V curve flattens above about 10 V for R/3G, which is the punch-through signature.
 - 2026-09-29 (v11): **manufacturability redesign (results/iter04).** R, 3G and iter01 cannot be built: the main-peak σ is below the P implant straggle (ΔRp ≈ 0.10 µm at about 300 keV), and σ² = ΔRp² + 2Dt. `tools/optimize_fab.py` searches with σ ≥ √(ΔRp² + 0.02²) and a modern tolerance set (dose ±3 %, Rp ±1.5 %, σ ±3 % dose-conserving, Nepi ±5 %, P⁺ junction ±3 %). **Recommended: P3** (3 P implants of 270/476/960 keV, predicted TCAD 484/183/78/24.3 pF, worst +0.262, Q ≈ 383, feasible even if ΔRp is 15 % above the table, tolerates σ +20 %). Alternatives: F3 (best shape, needs the table ΔRp) and P2 (2 implants). **All are now limited by the P⁺ junction depth** (HA peak ≈ 0.03–0.05 µm under x_j). Next: sprocess straggle check (`sentaurus/iter04/sprocess_Pstraggle_fps.cmd` + `tools/fit_implant.py`) and a 1D TCAD batch from `sentaurus/iter04_params.csv` (P3 first).
 - 2026-09-29 (v12): **2D plan (results/iter05):** three runs of R. A = C-V at Wwin 20, B = C-V at Wwin 40 (A + B give the area/edge split via `compare_2D_1D.m`), C = I-V 0–15 V at Wwin 20 (edge leakage and corner field). The per-window DOE values include the edge term and are expected to look "out of spec"; only Ca vs 1D and the 1 mm² projection count.
+- 2026-09-30 (v13): **2D results (results/iter05).** Run A (Wwin 20) is valid: Ce ≈ 2e-16 F/µm per edge, voltage-independent, same as iter00-2D. Projected 1 mm² die 491/196/80.3/25.6 pF, ratio 19.2, margin +0.39, all pass, edge share ≤ 3.1 %. Run C: die I_R(15 V) ≈ 1.23 nA (edge part about 0.006 nA). **Run B (Wwin 40) is invalid**: raw values are identical to A, so Wwin did not reach sde. It needs a re-run with Wwin at the sde step; expected raw C1V ≈ 2.01e-14.
+- 2026-09-30 (v14): **2D confirmation complete.** Run B was redone correctly (raw C1V 2.0092e-14, as predicted). Area term = 1D within 0.1 %; die C 491.5/196.5/80.3/25.6 pF, ratio 19.22, margin +0.389; die I_R 1.232 nA; die Q about 370. The 2D Q values are higher only because of lateral spreading (δ ≈ 5 µm = side margin). Still missing: 2D CSVs and the E-field screenshot.
+- 2026-09-30 (v15): the teacher asked for the device "thickness". It is the sdevice AreaFactor (sd §3: 2D width, default 1 µm), i.e. the junction area. It was derived from constraints: A ∈ [0.4, 1.34] mm² (breakdown vs Q). Kept at 1 mm² (1000 µm square).
+- 2026-09-30 (v16): **6.1–6.4 drafted as Claude Docs** (unfinished, so kept out of the repo and out of main; the link index is only in commit v16 153ffa8 on the working branch), with AreaFactor = 1 and 1 mm² conversion in post-processing. Placeholders 【…待补】 for figures and data; the missing items are the 2D corner E-field value and screenshot, and the P3 TCAD.
 - Versioning: one commit per version on the working branch, message prefix `vN:` (git tag push is blocked by the remote, 403).
 
 **Next steps, in priority order**
@@ -201,9 +208,9 @@ Note on HAsig 0.063: this σ is narrow, and whether it is achievable in a real p
 3. ~~Reverse I-V~~ ✅ v9/v10: R I_R(15 V) = 1.224 nA, and 10 µA is not reached by 15 V (0–15 V deck). Optional: run the 60 V deck for an "ideal 1D" BV. Push the exact I-V deck you ran.
 4. ~~Q extraction~~ ✅ v8: R Q(1 V) = 362.2 (spec ≥ 200). For new candidates use `python3 handcalc.py --q <design> <Tepi>`.
 4b. **iter04 (manufacturable redesign):** 1D TCAD of P3 / F3 / P2 from `sentaurus/iter04_params.csv`, then pick the final design. Only then do the 2D run. (The user said on 2026-09-29 that the process part is **not required for the current deliverable**. So the sprocess ΔRp check and the process recipe are optional, and the SDE parameters are what matters.)
-5. **2D confirmation of the final design**: windows 20 and 40 µm with `sde2D_param_dvs.cmd`. **Before running sdevice, look at the doping in SVisual to confirm the parameters took effect.**
+5. ~~2D confirmation~~ ✅ v14 for R (results/iter05). Open: CSVs and the E-field screenshot. Previously: windows 20 and 40 µm with `sde2D_param_dvs.cmd`. **Before running sdevice, look at the doping in SVisual to confirm the parameters took effect.**
 6. Temperature C-V (optional) and a sensitivity study (the tornado plot can be drawn from `handcalc.robust()`).
-7. By 10/11: documents 6.1–6.4. Material mapping:
+7. By 10/11: documents 6.1–6.4 (**drafted v16** as Claude Docs, not in the repo until finished; fill the placeholders). Material mapping:
    - 6.1 ← §3 and the hand model
    - 6.2 ← results_log and the iteration READMEs
    - 6.3 ← robustness, σ achievability, the 2D edge effect, punch-through
@@ -219,6 +226,7 @@ Note on HAsig 0.063: this σ is narrow, and whether it is achievable in a real p
 - **Data not saved**: the first 1D CSV version was lost. Svisual v2 writes a CSV automatically; after every batch, copy the CSVs into `results/iterNN/`.
 - **Doping species**: an N-type hyperabrupt Gaussian must be `PhosphorusActiveConcentration`. Every region needs a background constant doping. Oxide material is `"Oxide"`, not `"SiO2"`.
 - **SDE Analytical Profiles dialog**: 1e20 goes in Peak Concentration, not Peak Position. "Junction 1e17 @ Depth 0.297" is equivalent to σ 0.08.
+- **Parameter at the wrong SWB tool level** (iter05, 2026-09-30): the Wwin 20/40 runs gave identical raw C and I. Only the svisual normalisation changed, because Wwin did not reach sde. **A geometry parameter must sit at the sde step. Check that the raw values differ (not just the normalised ones) before trusting a sweep.**
 - **Grid-count estimates**: Claude estimated 25k twice and it came out as 220k and 101k. Treat Claude's grid estimates as unreliable; go by the actual snmesh output.
 - **Fitting method**: fitting in doping space left the region between the junction and W(1 V) unconstrained, which gave C1V = 298 pF. Fitting must be done in C-V space (ln C at 29 points).
 
