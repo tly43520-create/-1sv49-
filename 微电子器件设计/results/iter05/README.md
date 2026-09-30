@@ -53,3 +53,27 @@
 - Ce ≈ 2e-16 F/µm per edge, nearly independent of voltage. This matches iter00-2D, which had different doping, so the edge term is a property of the junction edge geometry.
 - **Projected 1 mm² square die** (perimeter 4000 µm): 491.4 / 196.4 / 80.3 / 25.6 pF, C1/C8 19.22, margin +0.390, **all four pass**. The edge share is 0.2 % (1 V) → 3.1 % (8 V), which confirms that designing in 1D is valid (§3). The straight-edge 2D approximation ignores the four die corners.
 - **Run C (I-V):** IR15 = 1.372 nA per 20 µm stripe, compared with 1.224 nA in 1D. The edge leakage is 1.5e-15 A/µm per edge, which is about 0.006 nA for a 1 mm² die. **The die I_R(15 V) is about 1.23 nA.** Still to do: screenshot of the ElectricField map at −15 V (corner field).
+
+## Results (2026-09-30, run B re-done with Wwin at the sde step) — **2D confirmation complete**
+
+| DOE row | IR15_nA | C1V_raw | C3V_raw | C5V_raw | C8V_raw | C*_pF (÷Wwin) | Ratio18 | Q1V |
+|---|---|---|---|---|---|---|---|---|
+| Wwin 20 | 1.372 | 1.0281e-14 | 4.3112e-15 | 1.9760e-15 | 8.8682e-16 | 514.05 / 215.56 / 98.80 / 44.34 | 11.593 | 517.3 |
+| Wwin 40 | 1.299 | 2.0092e-14 | 8.2255e-15 | 3.5675e-15 | 1.3826e-15 | 502.29 / 205.64 / 89.19 / 34.57 | 14.532 | 447.0 |
+
+The raw values differ now, and the Wwin 40 row matches the prediction made from run A + 1D (2.009e-14 predicted, 2.0092e-14 obtained).
+
+### Area / edge split, C_2D(W) = Ca·W + 2·Ce
+
+| V_R | Ca vs 1D | Ce [F/µm per edge] |
+|---|---|---|
+| 1 | +0.03 % | 2.35e-16 |
+| 3 | +0.05 % | 1.99e-16 |
+| 5 | +0.08 % | 1.92e-16 |
+| 8 | +0.04 % | 1.96e-16 |
+
+- **The area term reproduces the 1D result within 0.1 %**, so the 2D model and the 1D design are consistent. The edge term is about 2e-16 F/µm per edge and nearly voltage-independent.
+- **1 mm² square die:** 491.5 / 196.5 / 80.3 / 25.6 pF, C1/C8 19.22, margin +0.389, all four pass. The edge share is 0.2 → 3.1 %.
+- **Leakage:** area term 1.226 nA/mm² (1D 1.224). Edge term 1.46e-15 A/µm per edge. **The die I_R(15 V) is 1.232 nA** (spec ≤ 50).
+- **Q:** the 2D Q is higher (517 at W 20, 447 at W 40, 362 in 1D). Converted to a series resistance per 1 mm²: 0.599 Ω (W 20) and 0.709 Ω (W 40), against 0.896 Ω in 1D. This fits R_2D = R_1D·W/(W + 2δ) with δ = 5.0–5.3 µm, which is **exactly the 5 µm oxide-covered side margin**. The neutral epi and substrate span the full silicon width, so the series current spreads laterally under the oxide, and the narrow test stripes overstate Q. For a 1 mm² die the spreading share is about 4δ/√A ≈ 2 %, so **Q(die) ≈ 370**, essentially the 1D value (spec ≥ 200). Use the 1D Q in the report and cite the 2D values only to show this spreading effect.
+- Still to archive: the CSVs (A/B C-V, C I-V, doping cut) and the E-field screenshot at −15 V (P⁺ window corner).
