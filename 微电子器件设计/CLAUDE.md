@@ -93,6 +93,8 @@
 - **TCAD Q (1 V, 1 MHz): iter01 262.2 (Tepi 8), R 362.2 and 3G 400.4 (Tepi 6); all pass ≥ 200.** The raw ∫ρdx hand model underestimates Q because TCAD's resistive neutral epi is about 0.65 µm (≈ 2 L_D) shorter. `handcalc.q_estimate()` subtracts this (`RS_OFFSET_UM`) and matches TCAD within 2%.
 - C-V only fixes the profile shape. The scale is set by two opposing trends: breakdown favours thick, while Q ∝ 1/k² favours thin.
 
+**Device thickness / junction area (AreaFactor):** C-V alone cannot fix A: the similarity scaling A → s·A, depths × s, N / s² leaves C(V) unchanged. A is bounded by Q ∝ 1/s² (A ≤ 1.34 mm²) and by breakdown E ∝ 1/s (A ≳ 0.4 mm² for an ideal 1D BV ≥ 2 × 15 V). **Chosen: A = 1 mm², a 1000 × 1000 µm square, z-width 1000 µm, equivalent to AreaFactor 1e6 in quasi-1D.** See `results/area_scaling_README.md` and `tools/area_scaling.py`.
+
 **Material:** a wider bandgap gives a larger V_bi, which reduces the capacitance ratio. **Si is the best choice.**
 
 **Hand model** (`handcalc.py`)
@@ -196,6 +198,7 @@ Note on HAsig 0.063: this σ is narrow, and whether it is achievable in a real p
 - 2026-09-29 (v12): **2D plan (results/iter05):** three runs of R. A = C-V at Wwin 20, B = C-V at Wwin 40 (A + B give the area/edge split via `compare_2D_1D.m`), C = I-V 0–15 V at Wwin 20 (edge leakage and corner field). The per-window DOE values include the edge term and are expected to look "out of spec"; only Ca vs 1D and the 1 mm² projection count.
 - 2026-09-30 (v13): **2D results (results/iter05).** Run A (Wwin 20) is valid: Ce ≈ 2e-16 F/µm per edge, voltage-independent, same as iter00-2D. Projected 1 mm² die 491/196/80.3/25.6 pF, ratio 19.2, margin +0.39, all pass, edge share ≤ 3.1 %. Run C: die I_R(15 V) ≈ 1.23 nA (edge part about 0.006 nA). **Run B (Wwin 40) is invalid**: raw values are identical to A, so Wwin did not reach sde. It needs a re-run with Wwin at the sde step; expected raw C1V ≈ 2.01e-14.
 - 2026-09-30 (v14): **2D confirmation complete.** Run B was redone correctly (raw C1V 2.0092e-14, as predicted). Area term = 1D within 0.1 %; die C 491.5/196.5/80.3/25.6 pF, ratio 19.22, margin +0.389; die I_R 1.232 nA; die Q about 370. The 2D Q values are higher only because of lateral spreading (δ ≈ 5 µm = side margin). Still missing: 2D CSVs and the E-field screenshot.
+- 2026-09-30 (v15): the teacher asked for the device "thickness". It is the sdevice AreaFactor (sd §3: 2D width, default 1 µm), i.e. the junction area. It was derived from constraints: A ∈ [0.4, 1.34] mm² (breakdown vs Q). Kept at 1 mm² (1000 µm square).
 - Versioning: one commit per version on the working branch, message prefix `vN:` (git tag push is blocked by the remote, 403).
 
 **Next steps, in priority order**
