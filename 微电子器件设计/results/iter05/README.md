@@ -80,4 +80,4 @@ The raw values differ now, and the Wwin 40 row matches the prediction made from 
 
 ## All variables in one table
 
-`iter05_R2D_all_variables.csv` (v17) lists every variable of the design-R 2D runs in long format: `category, variable, unit, W20, W40, die_1mm2, source_note`. It covers the SWB inputs, the constants fixed in `sde2D_param_dvs.cmd`, the sdevice settings, the DOE outputs (C-V and I-V), and the derived area/edge terms. `Emax_corner_15V` is still TBD, pending the E-field screenshot.
+`iter05_R2D_all_variables.csv` (v17) lists every variable of the design-R 2D runs in long format: `category, variable, unit, W20, W40, die_1mm2, source_note`. It covers the SWB inputs, the constants fixed in `sde2D_param_dvs.cmd`, the sdevice settings, the DOE outputs (C-V and I-V), and the derived area/edge terms. `Emax_corner_15V` = 4.75e5 V/cm (v18, from the teammate E-field export, fig 6.2-8).

@@ -49,4 +49,4 @@ derived,margin_min,-,,,+0.389,worst of the 4 checkpoints (8 V); all four pass
 derived,IR_area,nA/mm2,,,1.226,area term of leakage; 1D 1.224
 derived,IR_edge,A/um per edge,,,1.46e-15,edge term of leakage (~0.006 nA for the 1 mm2 die)
 derived,Rs_equiv,ohm@1mm2,0.599,0.709,~0.88,1/(2*pi*f*C*Q); 1D 0.896; fits R_1D*W/(W+2*delta) with delta 5.0-5.3 um
-derived,Emax_corner_15V,V/cm,TBD,,,P+ window corner peak field at V_R = 15 V: read from the ElectricField map (not yet recorded); 1D hand estimate ~2.6e5
+derived,Emax_corner_15V,V/cm,4.75e5,,,"sampled peak at x~4.875 um, y~0.25 um (P+ lateral edge under oxide), V_R = 15 V; window centre ~2.5e5 (hand 1D 2.6e5), ratio ~1.85; SVisual cutline sampling, no mesh-convergence check (fig 6.2-8)"
