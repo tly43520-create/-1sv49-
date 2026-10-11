@@ -1,6 +1,6 @@
 #==========================================================
 # sdevice_ir15_des.cmd -- reverse I-V 0 -> 15 V, SWB version of the team deck
-# (sentaurus/iter03/sdevice_ir_15v_luyiming.cmd: same Physics / Math / Solve, only the File
+# (sentaurus/iter03/sdevice_ir_15v_teammate.cmd: same Physics / Math / Solve, only the File
 #  section uses SWB placeholders). Works for the 1D and the 2D SDE node.
 # 2D: the final Plot file (@tdrdat@, at -15 V) holds the ElectricField map -> look at the
 #     P+ window corners for field crowding. Currents are A per um of depth.

@@ -76,9 +76,9 @@
 (sdedr:define-refinement-placement "RefPlace.Rest" "Ref.Rest" (list "window" "Win.Rest"))
 
 ; ---------------- save & mesh ----------------
-(sde:save-model "/home/wzc/STDB/1sv/practice")
+(sde:save-model "/home/<user>/STDB/1sv/practice")
 (sde:set-meshing-command "snmesh")
-(sde:build-mesh "" "/home/wzc/STDB/1sv/practice")
+(sde:build-mesh "" "/home/<user>/STDB/1sv/practice")
 
 ; optional: open result
-; (system:command "svisual /home/wzc/STDB/1sv/practice_msh.tdr &")
+; (system:command "svisual /home/<user>/STDB/1sv/practice_msh.tdr &")
