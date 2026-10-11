@@ -12,9 +12,9 @@ Device DIODE {
     { Name="Cathode" Voltage=0.0 }
   }
   File {
-    Grid    = "/home/wzc/STDB/1sv/practice_msh.tdr"
-    Plot    = "/home/wzc/STDB/1sv/cv_des.tdr"
-    Current = "/home/wzc/STDB/1sv/cv_des.plt"
+    Grid    = "/home/<user>/STDB/1sv/practice_msh.tdr"
+    Plot    = "/home/<user>/STDB/1sv/cv_des.tdr"
+    Current = "/home/<user>/STDB/1sv/cv_des.plt"
   }
   Physics {
     Mobility( DopingDep HighFieldSaturation )
@@ -23,8 +23,8 @@ Device DIODE {
 }
 
 File {
-  Output    = "/home/wzc/STDB/1sv/cv_log"
-  ACExtract = "/home/wzc/STDB/1sv/cv_ac_des.plt"
+  Output    = "/home/<user>/STDB/1sv/cv_log"
+  ACExtract = "/home/<user>/STDB/1sv/cv_ac_des.plt"
 }
 
 Plot {

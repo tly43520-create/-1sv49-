@@ -1,6 +1,6 @@
 # 1SV149 超突变结变容二极管 · Sentaurus TCAD 逆向设计
 
-这是电子科技大学（UESTC）《半导体物理与器件》的课程设计（第 3 组）。我们用 Sentaurus TCAD 逆向设计东芝 1SV149 AM 调谐变容二极管，目标是让仿真器件的 C-V、Q、漏电和耐压接近官方 datasheet。
+这是《半导体物理与器件》的课程设计（第 3 组）。我们用 Sentaurus TCAD 逆向设计东芝 1SV149 AM 调谐变容二极管，目标是让仿真器件的 C-V、Q、漏电和耐压接近官方 datasheet。
 
 ## 当前结果（2026-09-30）
 
@@ -44,9 +44,9 @@
 | `svisual_vis_v2.tcl` | C-V 后处理：C1/3/5/8 和 Ratio18 写入 SWB 表的 DOE 列，并导出 `n<node>_cv.csv`。目前在用。 |
 | `svisual_vis_v3.tcl` | v2 的升级版：多导出电导 a(a,a) 用来算 Q，DOE 多一列 Q1V，另外导出掺杂切线 `n<node>_dop.csv`。下一批仿真开始使用。 |
 | `svisual_iv_vis.tcl` | I-V 后处理：DOE 列 IR15_nA、BV10uA_V，并导出 `n<node>_iv.csv`。 |
-| `sdevice_ir15_des.cmd` | 团队使用的 0–15 V 反向 I-V deck 的 SWB 版本，物理模型与路一鸣的版本相同。1D 和 2D 都能用。 |
+| `sdevice_ir15_des.cmd` | 团队使用的 0–15 V 反向 I-V deck 的 SWB 版本，物理模型与成员 B 的版本相同。1D 和 2D 都能用。 |
 | `svisual_vis_2d.tcl` / `svisual_iv_2d.tcl` | 2D 专用后处理：结果按窗口宽度 Wwin 归一化（含边缘项），掺杂截线取在窗口中心。 |
-| `iter03/sdevice_ir_15v_luyiming.cmd` | 路一鸣的 0–15 V I-V deck 原件，iter03 用的就是它。 |
+| `iter03/sdevice_ir_15v_teammate.cmd` | 成员 B 的 0–15 V I-V deck 原件，iter03 用的就是它。 |
 | `iter04_params.csv` | 可制造候选 P3、F3、P2、F2 的 SWB 参数表。 |
 | `iter04/sprocess_Pstraggle_fps.cmd` | 可选：用 sprocess 测磷注入的 ΔRp，以及 1100 °C 下的展宽。 |
 | `iter05_2D_params.csv` | 2D 三组仿真（A：C-V，W20；B：C-V，W40；C：I-V，W20）的参数表。 |
@@ -83,10 +83,12 @@
 | `iter00/` | 单高斯基线：C3V 不达标。 |
 | `iter01/` | 双高斯候选 A：四点通过，但抗参数扰动的能力不够（有陡崖）。含整条 C-V 曲线和分析结果。 |
 | `iter02/` | **设计 R 以及对照 3G**：README、C-V 的 CSV、DOE 截图、MATLAB 出的图；`SUMMARY.md` 是本节点的成果与不足总结。 |
-| `iter03/` | 反向 I-V（0–15 V）：三组的 CSV、I-V 图，以及 README（I_R、穿通特征、为什么没有给出击穿电压）。 |
+| `iter03/` | 反向 I-V（0–15 V）：三组的 CSV、I-V 图，以及 README（I_R、穿通特征、为什么没有给出击穿电压）。`teammate_iter01_repro/` 是队友用同一套脚本对 iter01 的独立复现（15 V 漏电 1.4356 nA，与本组一致）。 |
 | `iter04/` | 可制造性重设计：优化记录、候选方案对比，以及对 σ 偏差的敏感性。 |
 | `iter05/` | 2D 确认：运行清单、三组结果（面积/边缘拆分、1 mm² 管芯换算、边缘漏电、2D Q 偏高的原因）。 |
 | `area_scaling_README.md` | 器件“厚度”（AreaFactor）与结面积如何确定。 |
+| `iter05/iter05_R2D_all_variables.csv` | 设计 R 的 2D 仿真全部变量：SWB 输入、固定几何、仿真设置、DOE 输出和面积/边缘拆分结果（含拐角电场 4.75×10⁵ V/cm）。 |
+| `report_figs/` | 6.1–6.4 报告配图（队友绘制），附图片来源与限制说明。 |
 
 ### 其他
 
@@ -111,4 +113,4 @@ MATLAB 里运行 `matlab/run_analysis.m` 即可。
 
 ## 版本存档约定
 
-每个版本对应一个 commit，提交信息以 `vN:` 开头（v0 基线 → v14 2D 确认 → v15 结面积）。每轮迭代的数据、截图和 README 放进 `results/iterNN/`，数值追加到 `results_log.csv`。
+每个版本对应一个 commit，提交信息以 `vN:` 开头（v0 基线 → v14 2D 确认 → v15 结面积 → v18–v20 报告配图与拐角电场）。每轮迭代的数据、截图和 README 放进 `results/iterNN/`，数值追加到 `results_log.csv`。

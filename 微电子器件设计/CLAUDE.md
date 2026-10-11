@@ -19,7 +19,7 @@
 - For any specific Sentaurus operation step, first read the official tutorial in `refs/sentaurus_manual/` and answer strictly from it. Do not describe GUI interactions from training data. My version may differ; for example, drawing a polygon means "click the middle mouse button to finish, then enter all coordinates at once".
 - The subfolders are named by tool abbreviation: sde / sdevice(sd) / sprocess(sp) / svisual(sv) / swb / tcl / tdx / … Each has a menu page that serves as its table of contents.
 - If the document doesn't cover it, or is vague, say "文档没说" explicitly. Do not fill the gap with guesses.
-- If `refs/sentaurus_manual/` doesn't exist yet, remind me to download it from Google Drive: 大二上课程-半导体物理与器件2 → sentaurus官方教程, folder id `1V0vZ1TN1wNDdbviDtEa4QusnleBXG864`.
+- If `refs/sentaurus_manual/` doesn't exist yet, remind me to download it from Google Drive: 大二上课程-半导体物理与器件2 → sentaurus官方教程.
 
 **Geometry commands**
 - Fillets: give me only the parameters (radius, where the vertex sits in the structure, why it needs a fillet). Do not generate `sdegeo:fillet-2d`. Vertex coordinates change after boolean operations, and you can't query the real geometry.
@@ -27,16 +27,16 @@
 
 **Files and archiving**
 - Keep the result of every iteration, with one folder per iteration (`results/iterNN/`), holding a README, CSVs and screenshots.
-- When I ask to "备份记忆/导出" (back up memory / export), organise the key conclusions and conventions into Markdown named `memory_verN_YYYY-MM-DD.md`, with N incrementing from the previous version. Write it to `memory/` first; I will upload it to the Drive memory folder (id `1xB5cQ0MWOj8_3QJ2Ta6DS5NP0eFc_NJF`). If a Drive MCP is connected, you may upload it directly.
+- When I ask to "备份记忆/导出" (back up memory / export), organise the key conclusions and conventions into Markdown named `memory_verN_YYYY-MM-DD.md`, with N incrementing from the previous version. Write it to `memory/` first; I will upload it to the Drive memory folder. If a Drive MCP is connected, you may upload it directly.
 
 ---
 
 ## 1. Task and deadlines
 
 **Team (group 3)**
-- 王志诚 (me): lead, simulation, report
-- 路一鸣: theory and parameters
-- 原浚哲: application circuit, literature, paper and poster
+- Member A (me): lead, simulation, report
+- Member B: theory and parameters
+- Member C: manuscript review and theory analysis (earlier plan: application circuit, literature, paper and poster)
 
 **Task:** Design the Toshiba 1SV149 AM-tuning hyperabrupt varactor in Sentaurus TCAD, then produce the weekly documents, a paper, and a 90×120 cm poster.
 
@@ -115,7 +115,7 @@
 
 ## 4. Toolchain and conventions
 
-**Environment:** Sentaurus runs on the Linux VM, user wzc. The SWB project lives in `/home/wzc/STDB/1sv/` (← **update this if the actual path differs**). The SWB parameter group is named "HAdemo".
+**Environment:** Sentaurus runs on the Linux VM, user <user>. The SWB project lives in `/home/<user>/STDB/1sv/` (← **update this if the actual path differs**). The SWB parameter group is named "HAdemo".
 
 **SWB flow:** `sde → sdevice → svisual`. Placeholders:
 - `@node@`, `@tdr@`, `@tdrdat@`, `@plot@`, `@log@`, `@acplot@`, `@pwd@`, `@ParamName@`
@@ -133,7 +133,7 @@
 | `sdevice_des.cmd` | C-V: mixed-mode `Vsource_pset` + `ACCoupled`, 1 MHz, sweep 0 → −15 V | In use |
 | `svisual_vis_v2.tcl` | `probe_curve` reads C1/3/5/8 V and Ratio18 as DOE columns, and writes `n@node@_cv.csv` | In use (v1 with `export_variables` wrote no CSV and is obsolete) |
 | `svisual_vis_v3.tcl` | v2 plus the `a(a,a)` column (Q), DOE Q1V, and a doping cut → `n@node@_dop.csv` | **New in v6, not run yet.** Replaces v2 when the next C-V batch runs. `@tdrdat|sdevice@` is unverified (see matlab/README.md) |
-| `sdevice_iv_des.cmd` | Reverse I-V to −60 V with Avalanche(GradQuasiFermi), BreakCriteria 1e-9 A/µm | **Not run.** iter03 used the 0–15 V deck `iter03/sdevice_ir_15v_luyiming.cmd` instead. If it fails to converge, add `Resistor=` on the Anode (external-resistor method, sd §11.5). Put it in a separate SWB project. |
+| `sdevice_iv_des.cmd` | Reverse I-V to −60 V with Avalanche(GradQuasiFermi), BreakCriteria 1e-9 A/µm | **Not run.** iter03 used the 0–15 V deck `iter03/sdevice_ir_15v_teammate.cmd` instead. If it fails to converge, add `Resistor=` on the Anode (external-resistor method, sd §11.5). Put it in a separate SWB project. |
 | `svisual_iv_vis.tcl` | DOE columns IR15_nA, BV10uA_V, Vmax_V; writes `n@node@_iv.csv` | Used in iter03. The curve names `"Anode InnerVoltage"` / `"Anode TotalCurrent"` follow the manual pattern `"<contact> InnerVoltage"` / `"<contact> TotalCurrent"` (sv §6.2, GUI: sv §3.2 Data Selection panel → contact in the middle pane, quantity in the bottom pane). The contact name must match `Electrode { Name="Anode" }`. |
 
 **Unit conversions**
@@ -193,7 +193,7 @@ Note on HAsig 0.063: this σ is narrow, and whether it is achievable in a real p
 - 2026-09-29 (v7): root README with a per-file guide; merged into main via PR #2 (merge commit, so every vN stays in the history).
 - 2026-09-29 (v8): **TCAD Q = 262.2 / 362.2 / 400.4 (iter01 / R / 3G)**. Added a calibrated `handcalc.q_estimate` (`--q`). **Correction of v5:** R at Tepi 8 would give Q ≈ 214 (pass, 7% margin), not 191 (fail). Tepi 6 is kept for its 1.8× Q margin. Going below 6 µm is not useful, because punch-through would move toward 8 V.
 - 2026-09-29 (v9): **reverse I-V done (results/iter03).** IR15 = 1.436 / 1.255 / **1.224 nA** (iter01 / 3G / R) against the ≤ 50 nA spec. BV10uA = −1 for all three, meaning 10 µA is not reached in the sweep, so BV > Vmax. **Still need Vmax_V** to state BV > 60 V. I_R is SRH generation (implied τ_g ≈ 7–8 µs, I_R ∝ W). The spec holds for τ_g above about 0.2 µs.
-- 2026-09-29 (v10): the I-V CSVs are archived. **They only go to 15 V**: the user ran 路一鸣's 0–15 V deck (`sentaurus/iter03/sdevice_ir_15v_luyiming.cmd`), not the 60 V `sdevice_iv_des.cmd`. So the "Vmax 60" was a misreading, and **BV is not determined**. The datasheet condition V_R ≥ 15 V at 10 µA is still met, because I(15 V) = 1.2 nA. The team position (路一鸣) is to not extrapolate BV beyond 15 V; a 1D BV would only be an edge-free upper bound. The I-V curve flattens above about 10 V for R/3G, which is the punch-through signature.
+- 2026-09-29 (v10): the I-V CSVs are archived. **They only go to 15 V**: the user ran member B's 0–15 V deck (`sentaurus/iter03/sdevice_ir_15v_teammate.cmd`), not the 60 V `sdevice_iv_des.cmd`. So the "Vmax 60" was a misreading, and **BV is not determined**. The datasheet condition V_R ≥ 15 V at 10 µA is still met, because I(15 V) = 1.2 nA. The team position (member B) is to not extrapolate BV beyond 15 V; a 1D BV would only be an edge-free upper bound. The I-V curve flattens above about 10 V for R/3G, which is the punch-through signature.
 - 2026-09-29 (v11): **manufacturability redesign (results/iter04).** R, 3G and iter01 cannot be built: the main-peak σ is below the P implant straggle (ΔRp ≈ 0.10 µm at about 300 keV), and σ² = ΔRp² + 2Dt. `tools/optimize_fab.py` searches with σ ≥ √(ΔRp² + 0.02²) and a modern tolerance set (dose ±3 %, Rp ±1.5 %, σ ±3 % dose-conserving, Nepi ±5 %, P⁺ junction ±3 %). **Recommended: P3** (3 P implants of 270/476/960 keV, predicted TCAD 484/183/78/24.3 pF, worst +0.262, Q ≈ 383, feasible even if ΔRp is 15 % above the table, tolerates σ +20 %). Alternatives: F3 (best shape, needs the table ΔRp) and P2 (2 implants). **All are now limited by the P⁺ junction depth** (HA peak ≈ 0.03–0.05 µm under x_j). Next: sprocess straggle check (`sentaurus/iter04/sprocess_Pstraggle_fps.cmd` + `tools/fit_implant.py`) and a 1D TCAD batch from `sentaurus/iter04_params.csv` (P3 first).
 - 2026-09-29 (v12): **2D plan (results/iter05):** three runs of R. A = C-V at Wwin 20, B = C-V at Wwin 40 (A + B give the area/edge split via `compare_2D_1D.m`), C = I-V 0–15 V at Wwin 20 (edge leakage and corner field). The per-window DOE values include the edge term and are expected to look "out of spec"; only Ca vs 1D and the 1 mm² projection count.
 - 2026-09-30 (v13): **2D results (results/iter05).** Run A (Wwin 20) is valid: Ce ≈ 2e-16 F/µm per edge, voltage-independent, same as iter00-2D. Projected 1 mm² die 491/196/80.3/25.6 pF, ratio 19.2, margin +0.39, all pass, edge share ≤ 3.1 %. Run C: die I_R(15 V) ≈ 1.23 nA (edge part about 0.006 nA). **Run B (Wwin 40) is invalid**: raw values are identical to A, so Wwin did not reach sde. It needs a re-run with Wwin at the sde step; expected raw C1V ≈ 2.01e-14.
@@ -201,9 +201,10 @@ Note on HAsig 0.063: this σ is narrow, and whether it is achievable in a real p
 - 2026-09-30 (v15): the teacher asked for the device "thickness". It is the sdevice AreaFactor (sd §3: 2D width, default 1 µm), i.e. the junction area. It was derived from constraints: A ∈ [0.4, 1.34] mm² (breakdown vs Q). Kept at 1 mm² (1000 µm square).
 - 2026-09-30 (v16): **6.1–6.4 drafted as Claude Docs** (unfinished, so kept out of the repo and out of main; the link index is only in commit v16 153ffa8 on the working branch), with AreaFactor = 1 and 1 mm² conversion in post-processing. Placeholders 【…待补】 for figures and data; the missing items are the 2D corner E-field value and screenshot, and the P3 TCAD.
 - 2026-09-30 (v17): `results/iter05/iter05_R2D_all_variables.csv` gathers every variable of the R-2D runs (inputs, fixed geometry, settings, DOE outputs, derived Ca/Ce/die values). Emax_corner_15V is still TBD.
-- 2026-10-10 (v18): teammate figure package (zip) archived in `results/report_figs/` (6.1-1…6.4-2, with source/limit notes) and the teammate's iter01 0–15 V re-run in `results/iter03/teammate_iter01_repro/` (I_R(15 V) 1.4356 nA, reproduces our 1.436). The zip readme says that folder's structure/results are not final: **final = wzc's design R, A = 1 mm²**. **Corner field (W20, −15 V): 4.75e5 V/cm** at the P⁺ lateral edge under the oxide, window centre ≈ 2.5e5 (= 1D hand 2.6e5), ratio 1.85; edge leakage still only 1.46e-15 A/µm per edge. Note: the C-V deck runs at the sdevice default 300 K, the I-V deck at 298.15 K. 6.1 and 6.2 Claude Docs now carry the figures (teammate + ours); remaining placeholders are optional (handcalc screenshot, iter00/01 and 2D SWB DOE screenshots).
-- 2026-10-10 (v19): workload shares added to 6.1/6.2 (template asks "完成人：A%+B%" per section). Estimated from the shared Drive (课程设计一/wzc, lym, yjz): wzc ≈ 28 files + GitHub repo (all design/TCAD/2D/drafts); lym 34 files (theory review docx 9/24, 0–15 V I-V decks + iter01 repro 9/29, 18-figure package 9/30); yjz folder empty, role = 文稿审核 + 理论分析 per the user. Result: 6.1 王志诚 69 / 路一鸣 21 / 原浚哲 10 %; 6.2 73 / 22 / 5 %. User can adjust.
-- 2026-10-11 (v20): 6.3 and 6.4 Claude Docs finished the same way: figures 6.3-1 (corner field), 6.3-2(a) teammate plateau + (b) our full C-V, 6.4-1 (R vs P3 profile), 6.4-2 (P3 prediction vs R); corner-field placeholders filled (4.75e5 V/cm, 1.85×); datasheet typical C-V only plotted to ~9 V, so the 10–12 V check is moot; new 6.3 rows #9 (C-V at 300 K vs I-V 298.15 K) and #10 (corner field not mesh-converged) with matching 6.4 measures #7/#8. Workload: 6.3 王志诚 60 / 路一鸣 25 / 原浚哲 15 %; 6.4 68 / 20 / 12 %. Still open: P3 TCAD, textbook citations (ΔRp table, tolerances).
+- 2026-10-10 (v18): teammate figure package (zip) archived in `results/report_figs/` (6.1-1…6.4-2, with source/limit notes) and the teammate's iter01 0–15 V re-run in `results/iter03/teammate_iter01_repro/` (I_R(15 V) 1.4356 nA, reproduces our 1.436). The zip readme says that folder's structure/results are not final: **final = member A's design R, A = 1 mm²**. **Corner field (W20, −15 V): 4.75e5 V/cm** at the P⁺ lateral edge under the oxide, window centre ≈ 2.5e5 (= 1D hand 2.6e5), ratio 1.85; edge leakage still only 1.46e-15 A/µm per edge. Note: the C-V deck runs at the sdevice default 300 K, the I-V deck at 298.15 K. 6.1 and 6.2 Claude Docs now carry the figures (teammate + ours); remaining placeholders are optional (handcalc screenshot, iter00/01 and 2D SWB DOE screenshots).
+- 2026-10-10 (v19): workload shares added to 6.1/6.2 (template asks "完成人：A%+B%" per section). Estimated from the shared Drive (one folder per member): A ≈ 28 files + GitHub repo (all design/TCAD/2D/drafts); B 34 files (theory review docx 9/24, 0–15 V I-V decks + iter01 repro 9/29, 18-figure package 9/30); C's folder empty, role = 文稿审核 + 理论分析 per the user. Result: 6.1 成员 A 69 / 成员 B 21 / 成员 C 10 %; 6.2 73 / 22 / 5 %. User can adjust.
+- 2026-10-11 (v20): 6.3 and 6.4 Claude Docs finished the same way: figures 6.3-1 (corner field), 6.3-2(a) teammate plateau + (b) our full C-V, 6.4-1 (R vs P3 profile), 6.4-2 (P3 prediction vs R); corner-field placeholders filled (4.75e5 V/cm, 1.85×); datasheet typical C-V only plotted to ~9 V, so the 10–12 V check is moot; new 6.3 rows #9 (C-V at 300 K vs I-V 298.15 K) and #10 (corner field not mesh-converged) with matching 6.4 measures #7/#8. Workload: 6.3 成员 A 60 / 成员 B 25 / 成员 C 15 %; 6.4 68 / 20 / 12 %. Still open: P3 TCAD, textbook citations (ΔRp table, tolerances).
+- 2026-10-11 (v21): privacy scrub before merging to main: real names → Member A/B/C, the teammate deck renamed `sentaurus/iter03/sdevice_ir_15v_teammate.cmd`, VM home paths → `/home/<user>/`, Drive folder ids and the university name removed, the desktop SWB screenshot (fig 6.1-5) dropped from `results/report_figs/` (it stays in the 6.1 doc). Older git history on main still has the earlier names.
 - Versioning: one commit per version on the working branch, message prefix `vN:` (git tag push is blocked by the remote, 403).
 
 **Next steps, in priority order**
