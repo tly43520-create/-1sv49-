@@ -61,6 +61,8 @@
 | `optimize_fab.py` | 带工艺约束（σ ≥ ΔRp）的参数搜索，输出候选方案和对应的工艺配方（iter04）。 |
 | `fit_implant.py` | 从 sprocess 的 .plx 文件拟合 Rp、ΔRp 和 2Dt。 |
 | `area_scaling.py` | 结面积 / 器件厚度扫描：相似缩放下 C-V 不变，给出 Q、I_R 和理想 1D 击穿随面积的变化。 |
+| `make_report_figs.py` | 论文与海报配图：器件剖面示意（P⁺ 在单晶 Si 内）和窗口中心的一维净掺杂分布（输出到 `results/report_figs/8.x/`）。 |
+| `md3_ppt/` | MD3 风格汇报 PPT 生成（Node + pptxgenjs）：补齐模板缺失的设计令牌模块，`build_report_deck.js` 生成 23 页汇报。用法见该目录 README；成员姓名放在不入库的 `people.local.json`。 |
 
 ### `matlab/`：数据分析与作图（MATLAB 和 GNU Octave 都能跑）
 
@@ -88,7 +90,7 @@
 | `iter05/` | 2D 确认：运行清单、三组结果（面积/边缘拆分、1 mm² 管芯换算、边缘漏电、2D Q 偏高的原因）。 |
 | `area_scaling_README.md` | 器件“厚度”（AreaFactor）与结面积如何确定。 |
 | `iter05/iter05_R2D_all_variables.csv` | 设计 R 的 2D 仿真全部变量：SWB 输入、固定几何、仿真设置、DOE 输出和面积/边缘拆分结果（含拐角电场 4.75×10⁵ V/cm）。 |
-| `report_figs/` | 6.1–6.4 报告配图（队友绘制），附图片来源与限制说明。 |
+| `report_figs/` | 6.1–6.4 报告配图（队友绘制），附图片来源与限制说明；`8.x/` 是论文与海报用图，`ppt/` 是汇报 PPT 用的无标题版图。 |
 
 ### 其他
 
