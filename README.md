@@ -62,7 +62,9 @@
 | `fit_implant.py` | 从 sprocess 的 .plx 文件拟合 Rp、ΔRp 和 2Dt。 |
 | `area_scaling.py` | 结面积 / 器件厚度扫描：相似缩放下 C-V 不变，给出 Q、I_R 和理想 1D 击穿随面积的变化。 |
 | `make_report_figs.py` | 论文与海报配图：器件剖面示意（P⁺ 在单晶 Si 内）和窗口中心的一维净掺杂分布（输出到 `results/report_figs/8.x/`）。 |
-| `md3_ppt/` | MD3 风格汇报 PPT 生成（Node + pptxgenjs）：补齐模板缺失的设计令牌模块，`build_report_deck.js` 生成 23 页汇报。用法见该目录 README；成员姓名放在不入库的 `people.local.json`。 |
+| `md3_ppt/` | MD3 风格汇报 PPT 生成（Node + pptxgenjs）：补齐模板缺失的设计令牌模块，`build_report_deck.js` 生成 29 页汇报。用法见该目录 README；成员姓名放在不入库的 `people.local.json`。 |
+| `param_sensitivity.py` | 设计 R 的参数灵敏度（手算模型）：每次只改一个参数，输出 C1/3/5/8、C1/C8、Q 与穿通电压的变化，以及各检查电压下的耗尽边界。 |
+| `make_param_figs.py` | 汇报用图：高斯参数示意、三高斯叠加与耗尽边界、单参数变化的 C-V（输出到 `results/report_figs/ppt/`）。 |
 
 ### `matlab/`：数据分析与作图（MATLAB 和 GNU Octave 都能跑）
 
@@ -91,6 +93,7 @@
 | `area_scaling_README.md` | 器件“厚度”（AreaFactor）与结面积如何确定。 |
 | `iter05/iter05_R2D_all_variables.csv` | 设计 R 的 2D 仿真全部变量：SWB 输入、固定几何、仿真设置、DOE 输出和面积/边缘拆分结果（含拐角电场 4.75×10⁵ V/cm）。 |
 | `report_figs/` | 6.1–6.4 报告配图（队友绘制），附图片来源与限制说明；`8.x/` 是论文与海报用图，`ppt/` 是汇报 PPT 用的无标题版图。 |
+| `sensitivity/` | 设计 R 的参数灵敏度表（手算模型）与结论说明。 |
 
 ### 其他
 

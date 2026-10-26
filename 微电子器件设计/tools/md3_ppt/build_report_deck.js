@@ -223,36 +223,37 @@ async function applyThemeColors(file, name, colors) {
     eyebrow(s, "CONTENTS");
     title(s, "汇报内容");
     const items = [
-      ["01", "flag", "目标与理论设计", "手册指标与难点 · 逆向设计流程 · 器件结构 · 由 C-V 反推剖面 · 面积与外延厚度", C.primaryContainer, C.onPrimaryContainer],
-      ["02", "chart", "仿真验证", "仿真设置 · 四轮迭代 · C-V / Q / I-V 结果 · 超突变验证 · 二维双窗口拆分 · 拐角电场", C.secondaryContainer, C.onSecondaryContainer],
-      ["03", "tune", "优化与结论", "可制造候选 P3 与 R 的对比 · 存在问题与后续计划 · 结论与分工", C.tertiaryContainer, C.onTertiaryContainer],
+      ["01", "flag", "目标与原理", "手册指标与难点 · 逆向设计流程 · 器件结构 · 由 C-V 反推剖面", C.primaryContainer, C.onPrimaryContainer],
+      ["02", "functions", "掺杂设计与参数", "高斯掺杂 · 三高斯叠加 · 一维剖面 · 参数作用与灵敏度 · 面积与外延", C.secondaryContainer, C.onSecondaryContainer],
+      ["03", "chart", "仿真验证", "仿真设置 · 四轮迭代 · C-V / Q / I-V · 超突变验证 · 二维拆分 · 拐角电场", C.tertiaryContainer, C.onTertiaryContainer],
+      ["04", "tune", "优化与结论", "可制造候选 P3 · 存在问题与后续计划 · 结论与分工", C.surfaceContainerHigh, C.onSurface],
     ];
     items.forEach(([num, ico, t, body, bg, fg], i) => {
-      const x = G.x(i * 4), w = G.w(4);
+      const x = G.x(i * 3), w = G.w(3);
       card(s, { x, y: 1.88, w, h: 3.52, fill: bg });
-      txt(s, num, { x: x + 0.38, y: 2.14, w: 1, h: 0.24, fontSize: T.labelLg, bold: true, color: fg, mono: true, charSpacing: 1.2, lineSpacingMultiple: 1.0 });
-      iconChip(s, I[ico], { x: x + 0.38, y: 2.5, d: 0.74, bg: C.surfaceContainerLowest });
-      txt(s, t, { x: x + 0.38, y: 3.48, w: w - 0.76, h: 0.36, fontSize: T.titleLg, bold: true, color: fg, lineSpacingMultiple: 1.0 });
-      txt(s, body, { x: x + 0.38, y: 3.98, w: w - 0.76, h: 1.25, fontSize: T.bodyMd, color: fg, lineSpacingMultiple: 1.45 });
+      txt(s, num, { x: x + 0.33, y: 2.14, w: 1, h: 0.24, fontSize: T.labelLg, bold: true, color: fg, mono: true, charSpacing: 1.2, lineSpacingMultiple: 1.0 });
+      iconChip(s, I[ico], { x: x + 0.33, y: 2.5, d: 0.74, bg: C.surfaceContainerLowest });
+      txt(s, t, { x: x + 0.33, y: 3.48, w: w - 0.66, h: 0.36, fontSize: T.titleLg, bold: true, color: fg, lineSpacingMultiple: 1.0 });
+      txt(s, body, { x: x + 0.33, y: 3.95, w: w - 0.66, h: 1.3, fontSize: T.bodySm, color: fg, lineSpacingMultiple: 1.45 });
     });
     txt(s, "主线：手册 C-V → 目标剖面 → 三高斯结构 → TCAD 验证 → 可制造优化", {
       x: G.mx, y: 5.75, w: 11.5, h: 0.3, fontSize: T.bodyMd, color: C.onSurfaceVariant });
-    s.addNotes("版式：L1 总览（三张 tonal 卡片）。\n汇报分三部分：先讲指标和理论设计，再讲仿真验证，最后讲面向工艺的优化和结论。一句话主线：从手册曲线出发，反推剖面，搭结构，用 TCAD 验证，再考虑能不能造出来。");
+    s.addNotes("版式：L1 总览（四张 tonal 卡片）。\n汇报分四部分：指标与原理、掺杂设计与参数、仿真验证、面向工艺的优化与结论。一句话主线：从手册曲线出发，反推剖面，搭结构，用 TCAD 验证，再考虑能不能造出来。");
   }
 
   // =====================================================================
   // 03 章节 01
   // =====================================================================
-  sectionSlide("01 目标与理论设计", "01", "目标与理论设计",
-    "手册只给电学指标。先把 C-V 曲线翻译成掺杂剖面，再由 Q 值与击穿约束定下结面积和外延厚度。",
-    "指标 · 方法 · 结构 · 剖面 · 尺寸",
-    "版式：L2 章节分隔页（primaryContainer 满版 + 大号序号）。\n第一部分：设计目标与理论设计。");
+  sectionSlide("01 目标与原理", "01", "目标与原理",
+    "手册只给电学指标。先定指标和难点，再把 C-V 曲线翻译成掺杂剖面。",
+    "指标 · 方法 · 结构 · 原理",
+    "版式：L2 章节分隔页（primaryContainer 满版 + 大号序号）。\n第一部分：设计目标与原理。");
 
   // =====================================================================
   // 04 手册指标（L7 表格 + 色调卡）
   // =====================================================================
   {
-    const s = content("01 目标与理论设计");
+    const s = content("01 目标与原理");
     eyebrow(s, "1.1 TARGETS");
     title(s, "1SV149 手册指标与设计难点");
     table(s, [
@@ -279,7 +280,7 @@ async function applyThemeColors(file, name, colors) {
   // 05 逆向设计流程（L6 纵向四步 + 色调卡）
   // =====================================================================
   {
-    const s = content("01 目标与理论设计");
+    const s = content("01 目标与原理");
     eyebrow(s, "1.2 METHOD");
     title(s, "逆向设计：从手册曲线到器件");
     const steps = [
@@ -310,7 +311,7 @@ async function applyThemeColors(file, name, colors) {
   // 06 器件结构（新增版式：图卡 + 区域说明卡）
   // =====================================================================
   {
-    const s = content("01 目标与理论设计");
+    const s = content("01 目标与原理");
     eyebrow(s, "1.3 STRUCTURE");
     title(s, "器件结构：P^+ / N / N^− / N^+ 平面结");
     await figure(s, "8.x/poster_structure.png", { x: G.mx, y: 1.72, w: G.w(7), h: 4.45,
@@ -333,7 +334,7 @@ async function applyThemeColors(file, name, colors) {
   // 07 理论公式（新增版式：公式块 + 变量卡）
   // =====================================================================
   {
-    const s = content("01 目标与理论设计");
+    const s = content("01 目标与原理");
     eyebrow(s, "1.4 THEORY");
     title(s, "从 C-V 曲线反推掺杂剖面");
     card(s, { x: G.mx, y: 1.75, w: G.w(12), h: 1.75, fill: C.surfaceContainerHighest });
@@ -359,11 +360,64 @@ async function applyThemeColors(file, name, colors) {
   }
 
   // =====================================================================
+  // 章节 02
+  // =====================================================================
+  sectionSlide("02 掺杂设计与参数", "02", "掺杂设计与参数",
+    "一次注入对应一个高斯。三个高斯叠加出超突变剖面，每个参数管 C-V 曲线的一段。",
+    "高斯 · 叠加 · 剖面 · 参数 · 灵敏度 · 尺寸",
+    "版式：L2 章节分隔页。\n第二部分：掺杂怎么设计——用了哪几个高斯，每个参数管 C-V 曲线的哪一段。");
+
+  // =====================================================================
+  // 高斯掺杂（新增版式：公式块 + 图卡 + 参数卡）
+  // =====================================================================
+  {
+    const s = content("02 掺杂设计与参数");
+    eyebrow(s, "2.1 GAUSSIAN PROFILE");
+    title(s, "高斯掺杂：一次注入对应一个高斯");
+    card(s, { x: G.mx, y: 1.72, w: G.w(12), h: 1.15, fill: C.surfaceContainerHighest });
+    const fo = { fontFace: FM, italic: true, fontSize: 22, color: C.onSurface };
+    s.addText([
+      ...rt("N(y) = N_{peak} · exp[ −(y − R_p)^2 / (2σ^2) ]\n", fo),
+      ...rt("Φ = √(2π) · σ · N_{peak} ,      σ^2 = ΔR_p^2 + 2Dt", fo),
+    ], { x: G.mx, y: 1.72, w: G.w(12), h: 1.15, align: "center", valign: "middle", margin: 0, isTextBox: true, lineSpacingMultiple: 1.2 });
+    await figure(s, "ppt/fig_gauss_anatomy.png", { x: G.mx, y: 3.12, w: G.w(8), h: 3.6,
+      caption: "左：设计 R 的主峰 HA；右：退火时剂量不变，σ 只会变宽（示意）", alt: "高斯掺杂的三个参数与退火展宽" });
+    const x = G.x(8), w = G.w(4);
+    card(s, { x, y: 3.12, w, h: 3.6, fill: C.primaryContainer });
+    bullets(s, [
+      ["N_{peak} ↔ 剂量", "剂量 Φ 是曲线下面积；HA 约 1.15×10^{12} cm^{−2}"],
+      ["R_p ↔ 注入能量", "能量越高峰越深；HA 的峰位 0.40 µm"],
+      ["σ ↔ 离散 + 退火", "σ^2 = ΔR_p^2 + 2Dt，退火只会让 σ 变大"],
+    ], { x: x + 0.3, y: 3.42, w: w - 0.6, pitch: 1.05, tCol: C.onPrimaryContainer, dCol: C.onPrimaryContainer, dH: 0.6 });
+    s.addNotes("版式：新增「公式块 + 图卡 + 参数卡」。\n离子注入后的杂质分布近似高斯：峰位 R_p 由注入能量决定，σ 起初等于射程离散 ΔR_p，退火后 σ² 再加 2Dt；剂量是曲线下面积 √(2π)σN_peak，退火前后不变，所以 σ 只会变宽、峰只会变矮。主峰 HA：7.3e16 cm⁻³、0.40 µm、σ 0.063 µm，剂量约 1.15e12 cm⁻²。SDE 里每个高斯是一条 define-gaussian-profile，PeakVal / PeakPos / StdDev 由 SWB 参数表传入。");
+  }
+
+  // =====================================================================
+  // 三个高斯叠加（图卡 + 说明卡）
+  // =====================================================================
+  {
+    const s = content("02 掺杂设计与参数");
+    eyebrow(s, "2.2 STACKING");
+    title(s, "三个高斯叠加出超突变剖面");
+    await figure(s, "ppt/fig_gauss_stack.png", { x: G.mx, y: 1.72, w: G.w(8), h: 4.6,
+      caption: "R 的 N 侧 = HA + HA2 + HA3 + N_{epi}；竖点线为各检查电压下的耗尽边界 x_b（手算）", alt: "三个高斯叠加与各电压下的耗尽边界" });
+    const x = G.x(8), w = G.w(4);
+    card(s, { x, y: 1.72, w, h: 4.6, fill: C.surfaceContainerLow });
+    bullets(s, [
+      ["HA 主峰 · 0.40 µm", "紧贴结下方，提供低压电荷；1 V 时耗尽边界 0.47 µm"],
+      ["HA2 过渡 · 0.54 µm", "填平主峰与外延之间的断崖；3 V 时边界 0.79 µm"],
+      ["HA3 拖尾 · 0.88 µm", "σ = 0.80 µm，平滑接到外延；5 V 时边界 1.59 µm"],
+      ["N_{epi} 外延", "1.5×10^{14} cm^{−3}；8 V 时边界 4.54 µm"],
+    ], { x: x + 0.3, y: 2.0, w: w - 0.6, pitch: 1.02, dH: 0.6 });
+    s.addNotes("版式：新增「图卡 + 说明卡」（8:4 分栏）。\n单高斯手算筛了 912 组全部失败，所以分三段：HA 主峰紧贴结下方提供低压电荷，HA2 填平主峰与外延之间的断崖，HA3 拖尾平滑接到外延。竖点线是各检查电压下的耗尽边界：1 V 在 0.47 µm，3 V 在 0.79 µm，5 V 在 1.59 µm，8 V 在 4.54 µm。耗尽边界扫过哪一段，C-V 在那个电压附近的斜率就由那一段浓度决定。");
+  }
+
+  // =====================================================================
   // 08 一维掺杂剖面（图卡 + 参数表卡）
   // =====================================================================
   {
-    const s = content("01 目标与理论设计");
-    eyebrow(s, "1.5 DOPING PROFILE");
+    const s = content("02 掺杂设计与参数");
+    eyebrow(s, "2.3 DOPING PROFILE");
     title(s, "窗口中心的一维掺杂剖面");
     await figure(s, "8.x/poster_doping_1d.png", { x: G.mx, y: 1.72, w: G.w(8), h: 4.6,
       caption: "净掺杂 |N_D − N_A| 随深度 y：(a) 0–8 µm 全深度；(b) 结附近放大，R 与 P3 的结深为 0.318 / 0.303 µm", alt: "一维净掺杂分布" });
@@ -382,11 +436,91 @@ async function applyThemeColors(file, name, colors) {
   }
 
   // =====================================================================
+  // 设计参数一览（L7 表格 + 强调条）
+  // =====================================================================
+  {
+    const s = content("02 掺杂设计与参数");
+    eyebrow(s, "2.4 PARAMETERS");
+    title(s, "设计参数一览：每个参数管哪一段");
+    table(s, [
+      ["参数", "R 的取值", "物理意义", "主要影响"],
+      ["P^+ 结深（σ_p）", "σ_p = 0.080 µm，结深 0.318 µm", "硼扩散深度", "最敏感：补偿主峰电荷，C_1–C_8 全变"],
+      ["HA 峰值 / 峰位 / σ", "7.3×10^{16} / 0.40 / 0.063", "主峰的剂量、能量、宽度", "C_3、C_5 变化最大，C_1 也变"],
+      ["HA2 峰值 / 峰位 / σ", "7.6×10^{15} / 0.54 / 0.25", "过渡峰，填平断崖", "以 C_5 为主"],
+      ["HA3 峰值 / 峰位 / σ", "1.0×10^{15} / 0.88 / 0.80", "拖尾，接到外延", "C_5 和 C_8"],
+      ["N_{epi}", "1.5×10^{14} cm^{−3}", "外延浓度", "C_8 和 Q"],
+      ["T_{epi}", "6 µm", "外延厚度", "穿通电压与 Q，不改 1–8 V 电容"],
+      ["A", "1 mm^2", "结面积", "所有电容按面积缩放，Q ∝ 1/A"],
+    ], { x: G.mx, y: 1.8, colW: [2.4, 3.0, 2.6, 4.0], rowH: [0.48, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], fontSize: 12.5 });
+    card(s, { x: G.mx, y: 5.95, w: G.w(12), h: 0.85, fill: C.primaryContainer });
+    txt(s, rt("**规律**：某一电压下的电容由结到耗尽边界之间的全部电荷决定，所以越浅的参数影响越多的检查点。峰值单位 cm^{−3}，峰位与 σ 单位 µm。"), {
+      x: G.mx + 0.35, y: 5.95, w: G.w(12) - 0.7, h: 0.85, fontSize: T.bodyMd, color: C.onPrimaryContainer, valign: "middle", lineSpacingMultiple: 1.35 });
+    s.addNotes("版式：L7 表格 + tonal 强调条。\n把所有设计参数列在一起：每个高斯的峰值、峰位、σ，加上 P⁺ 结深、外延浓度与厚度、结面积。右列是它主要管 C-V 的哪一段，下两页分别用曲线和数字证明。");
+  }
+
+  // =====================================================================
+  // 参数对 C-V 曲线的影响（新增版式：宽图卡 + 窄说明卡）
+  // =====================================================================
+  {
+    const s = content("02 掺杂设计与参数");
+    eyebrow(s, "2.5 PARAMETER EFFECTS");
+    title(s, "参数对 C-V 曲线的影响");
+    await figure(s, "ppt/fig_param_cv.png", { x: G.mx, y: 1.72, w: G.w(9), h: 4.95,
+      caption: "每个小图只改一个参数（手算模型，看趋势）；黑线为设计 R，灰框为手册窗口", alt: "单个参数变化时的 C-V 曲线" });
+    const x = G.x(9), w = G.w(3);
+    card(s, { x, y: 1.72, w, h: 4.95, fill: C.tertiaryContainer });
+    bullets(s, [
+      ["P^+ 结深最敏感", "结深浅 10%，C_5、C_8 就超出上限"],
+      ["越深越靠后", "HA 管 3–8 V，HA2 管中段，N_{epi} 管 6 V 以后"],
+      ["T_{epi} 只改穿通", "1–8 V 不变；5 µm 时穿通提前到 8.5 V"],
+    ], { x: x + 0.28, y: 2.0, w: w - 0.56, pitch: 1.45, dot: C.tertiary, tCol: C.onTertiaryContainer, dCol: C.onTertiaryContainer, dH: 0.95 });
+    s.addNotes("版式：新增「宽图卡 + 窄说明卡」（9:3 分栏）。\n六个小图各改一个参数：黑线是 R，浅色虚线是参数减小，深色实线是参数增大，灰框是手册窗口。P⁺ 结深最敏感，结深浅 10% 时 C5、C8 就超出上限。HA 管 3–8 V，HA2 管中段，N_epi 管 6 V 以后；T_epi 在 8 V 以内不变，只改穿通：5 µm 时穿通提前到 8.5 V，所以外延不能再薄。曲线来自手算模型，只看趋势。");
+  }
+
+  // =====================================================================
+  // 灵敏度热力表（L7 表格，蓝 = 变大，橙 = 变小）
+  // =====================================================================
+  {
+    const s = content("02 掺杂设计与参数");
+    eyebrow(s, "2.6 SENSITIVITY");
+    title(s, "灵敏度：越浅的参数影响越多检查点");
+    const SENS = [
+      ["P^+ 结深 σ_p", "+10%", -10.9, -22.0, -25.9, -14.3, 4.1, 12.2],
+      ["HA 峰值", "+10%", 5.1, 10.5, 12.6, 6.9, -1.7, -4.9],
+      ["HA 峰位", "+0.02 µm", 0.9, 15.3, 17.8, 9.5, -7.8, -0.9],
+      ["HA σ", "+10%", 1.8, 10.7, 12.8, 7.0, -4.8, -1.8],
+      ["HA2 峰值", "+10%", 0.6, 5.2, 10.5, 5.7, -4.8, -0.6],
+      ["HA2 峰位", "+0.02 µm", -0.3, 0.9, 5.9, 3.2, -3.4, 0.4],
+      ["HA2 σ", "+10%", 0.2, 1.3, 12.6, 6.9, -6.3, 0.1],
+      ["HA3 峰值", "+10%", 0.1, 0.8, 5.0, 5.7, -5.3, 1.2],
+      ["HA3 峰位", "+0.02 µm", 0.0, -0.1, 0.4, 1.2, -1.2, 0.6],
+      ["HA3 σ", "+10%", 0.0, 0.1, 1.0, 8.1, -7.4, 4.9],
+      ["N_{epi}", "+10%", 0.0, 0.1, 0.9, 4.8, -4.6, 8.5],
+      ["T_{epi}", "+10%", 0.0, 0.0, 0.0, 0.0, 0.0, -16.5],
+    ];
+    const mix = (hex, a) => [0, 2, 4].map(i => Math.round(parseInt(hex.slice(i, i + 2), 16) * a + 255 * (1 - a))
+      .toString(16).padStart(2, "0")).join("").toUpperCase();
+    const heat = v => Math.abs(v) < 0.5 ? C.surfaceContainerLowest : mix(v > 0 ? "2A78D6" : "EB6834", 0.12 + Math.min(Math.abs(v) / 25, 1) * 0.7);
+    const fmt = v => Math.abs(v) < 0.5 ? "0" : `${v > 0 ? "+" : "−"}${Math.abs(v).toFixed(1)}`;
+    const rows = [["参数（单独增大）", "C_1", "C_3", "C_5", "C_8", "C_1/C_8", "Q（1 V）"],
+      ...SENS.map(([n, st, ...v]) => [`${n}  ${st}`, ...v.map(fmt)])];
+    table(s, rows, { x: G.mx, y: 1.75, colW: [3.0, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5], rowH: Array(13).fill(0.355), fontSize: 11.5,
+      cellStyle: (ri, ci) => {
+        if (ci === 0) return {};
+        const v = SENS[ri - 1][ci + 1];
+        return { fill: { color: heat(v) }, align: "center", bold: Math.abs(v) >= 10, color: Math.abs(v) < 0.5 ? C.outline : C.onSurface };
+      } });
+    txt(s, rt("蓝 = 变大，橙 = 变小，颜色越深变化越大（%）。设计 R，手算模型，T_{epi} = 6 µm；峰值、σ、N_{epi}、T_{epi}、σ_p 增大 10%，峰位加深 0.02 µm。"), {
+      x: G.mx, y: 6.47, w: 12.0, h: 0.32, fontSize: T.bodySm, color: C.onSurfaceVariant, lineSpacingMultiple: 1.0 });
+    s.addNotes("版式：L7 表格（热力表：蓝为变大，橙为变小）。\n每次只把一个参数增大 10%（峰位加深 0.02 µm），看四个电容点、电容比和 Q 变化的百分比。规律：越浅的参数影响越多的点——某一电压下的耗尽宽度由结到耗尽边界之间的全部电荷决定，浅处多一点电荷，后面每个电压的电容都会变大；深处的电荷低压时还没被耗尽，只影响高压点。最敏感的是 P⁺ 结深，其次是主峰的峰位和宽度；T_epi 不改 1–8 V 电容，但 Q 降 16%。");
+  }
+
+  // =====================================================================
   // 09 面积与外延（L5 四个统计数 + 宽卡）
   // =====================================================================
   {
-    const s = content("01 目标与理论设计");
-    eyebrow(s, "1.6 SIZING");
+    const s = content("02 掺杂设计与参数");
+    eyebrow(s, "2.7 SIZING");
     title(s, "结面积与外延厚度由约束确定");
     const stats = [
       ["1 mm²", "结面积（可行窗口 0.4–1.34 mm^2）", C.primaryContainer, C.onPrimaryContainer],
@@ -406,17 +540,17 @@ async function applyThemeColors(file, name, colors) {
   // =====================================================================
   // 10 章节 02
   // =====================================================================
-  sectionSlide("02 仿真验证", "02", "仿真验证",
+  sectionSlide("03 仿真验证", "03", "仿真验证",
     "准一维 TCAD 迭代定剖面，二维双窗口验证边缘效应，结果全部换算到 1 mm^2 芯片。",
     "设置 · 迭代 · 结果 · 超突变 · 二维拆分 · 拐角",
-    "版式：L2 章节分隔页。\n第二部分：仿真验证。");
+    "版式：L2 章节分隔页。\n第三部分：仿真验证。");
 
   // =====================================================================
   // 11 仿真设置（L7 表格 + 色调卡）
   // =====================================================================
   {
-    const s = content("02 仿真验证");
-    eyebrow(s, "2.1 SETUP");
+    const s = content("03 仿真验证");
+    eyebrow(s, "3.1 SETUP");
     title(s, "仿真模型与方法");
     table(s, [
       ["仿真", "物理模型", "求解与输出"],
@@ -437,8 +571,8 @@ async function applyThemeColors(file, name, colors) {
   // 12 四轮迭代（L7 宽表格）
   // =====================================================================
   {
-    const s = content("02 仿真验证");
-    eyebrow(s, "2.2 ITERATION");
+    const s = content("03 仿真验证");
+    eyebrow(s, "3.2 ITERATION");
     title(s, "四轮迭代：从单高斯到三高斯");
     const rows = [
       ["方案", "剖面", "T_{epi}", "C_1", "C_3", "C_5", "C_8", "C_1/C_8", "结论"],
@@ -465,8 +599,8 @@ async function applyThemeColors(file, name, colors) {
   // 13 C-V / I-V 结果（图卡 + 2×2 统计数）
   // =====================================================================
   {
-    const s = content("02 仿真验证");
-    eyebrow(s, "2.3 C-V / I-V");
+    const s = content("03 仿真验证");
+    eyebrow(s, "3.3 C-V / I-V");
     title(s, "C-V 与 I-V：全部手册指标达标");
     await figure(s, "ppt/fig_cv_iv_R_P3.png", { x: G.mx, y: 1.72, w: G.w(5), h: 4.95,
       caption: "R 与 P3 换算到 1 mm^2：上为 C-V（绿框为手册窗口），下为 I-V（虚线为 50 nA 上限）", alt: "R 与 P3 的 C-V 与反向 I-V" });
@@ -488,8 +622,8 @@ async function applyThemeColors(file, name, colors) {
   // 14 超突变验证（图卡 + 证据卡）
   // =====================================================================
   {
-    const s = content("02 仿真验证");
-    eyebrow(s, "2.4 HYPERABRUPT");
+    const s = content("03 仿真验证");
+    eyebrow(s, "3.4 HYPERABRUPT");
     title(s, "超突变特性：局部 n 峰值 3.29");
     await figure(s, "ppt/fig_local_n.png", { x: G.mx, y: 1.72, w: G.w(7), h: 4.6,
       caption: "R 的局部电容指数 n(V) = −d ln C / d ln(V + V_{bi})，由二维面积项电容计算，V_{bi} = 0.8 V", alt: "R 的局部电容指数" });
@@ -507,8 +641,8 @@ async function applyThemeColors(file, name, colors) {
   // 15 双窗口拆分（新增版式：公式块 + 四张变量卡）
   // =====================================================================
   {
-    const s = content("02 仿真验证");
-    eyebrow(s, "2.5 2D SPLIT");
+    const s = content("03 仿真验证");
+    eyebrow(s, "3.5 2D SPLIT");
     title(s, "双窗口拆分面积项与边缘项");
     card(s, { x: G.mx, y: 1.75, w: G.w(12), h: 1.6, fill: C.surfaceContainerHighest });
     const fo = { fontFace: FM, italic: true, fontSize: 26, color: C.onSurface };
@@ -537,8 +671,8 @@ async function applyThemeColors(file, name, colors) {
   // 16 边缘占比（L3 两栏：论点 + 原生图表）
   // =====================================================================
   {
-    const s = content("02 仿真验证");
-    eyebrow(s, "2.6 EDGE SHARE");
+    const s = content("03 仿真验证");
+    eyebrow(s, "3.6 EDGE SHARE");
     title(s, "边缘项只占整片电容的 0.2–3.1%");
     txt(s, "窗口越宽、芯片越大，边缘项占比越小——这是用一维结构设计剖面成立的依据。", {
       x: G.mx, y: 1.78, w: G.w(5), h: 0.9, fontSize: T.bodyLg, color: C.onSurfaceVariant, lineSpacingMultiple: 1.45 });
@@ -571,8 +705,8 @@ async function applyThemeColors(file, name, colors) {
   // 17 拐角电场（图卡 + 说明卡）
   // =====================================================================
   {
-    const s = content("02 仿真验证");
-    eyebrow(s, "2.7 CORNER FIELD");
+    const s = content("03 仿真验证");
+    eyebrow(s, "3.7 CORNER FIELD");
     title(s, "拐角电场：耐压的薄弱点");
     await figure(s, "ppt/fig_corner_field.png", { x: G.mx, y: 1.72, w: G.w(8), h: 4.35,
       caption: "R（W = 20 µm）在 −15 V：左为窗口拐角附近的 |E|，右为拐角与窗口中心的纵向电场切线", alt: "−15 V 时窗口拐角电场" });
@@ -596,17 +730,17 @@ async function applyThemeColors(file, name, colors) {
   // =====================================================================
   // 18 章节 03
   // =====================================================================
-  sectionSlide("03 优化与结论", "03", "优化与结论",
+  sectionSlide("04 优化与结论", "04", "优化与结论",
     "R 的主峰比磷注入自身的展宽还窄。把工艺约束写进搜索，得到可制造候选 P3。",
     "R vs P3 · 问题与计划 · 结论",
-    "版式：L2 章节分隔页。\n第三部分：面向工艺的优化与结论。");
+    "版式：L2 章节分隔页。\n第四部分：面向工艺的优化与结论。");
 
   // =====================================================================
   // 19 R 与 P3（L7 表格 + 色调卡）
   // =====================================================================
   {
-    const s = content("03 优化与结论");
-    eyebrow(s, "3.1 OPTIMIZATION");
+    const s = content("04 优化与结论");
+    eyebrow(s, "4.1 OPTIMIZATION");
     title(s, "R 与 P3：电学最优与可制造");
     table(s, [
       ["参数", "目标", "R（最终设计）", "P3（可制造候选）"],
@@ -632,8 +766,8 @@ async function applyThemeColors(file, name, colors) {
   // 20 存在问题与后续计划（2×2 卡片）
   // =====================================================================
   {
-    const s = content("03 优化与结论");
-    eyebrow(s, "3.2 LIMITATIONS");
+    const s = content("04 优化与结论");
+    eyebrow(s, "4.2 LIMITATIONS");
     title(s, "存在问题与后续计划");
     const probs = [
       ["击穿电压未提取", "I-V 只扫到额定 15 V；手算理想一维击穿约 106 V", "用外串电阻法做二维反向扫描，提取 10 µA 对应电压"],
@@ -656,7 +790,7 @@ async function applyThemeColors(file, name, colors) {
   // 21 结论金句（反色容器）
   // =====================================================================
   {
-    const s = p.addSlide({ masterName: "MD3_QUOTE", sectionTitle: "03 优化与结论" });
+    const s = p.addSlide({ masterName: "MD3_QUOTE", sectionTitle: "04 优化与结论" });
     card(s, { x: G.mx, y: 1.35, w: G.w(12), h: 4.7, fill: C.inverseSurface });
     s.addText("手册只给电学指标；\n剖面、面积和外延，都是从约束里推出来的。", { placeholder: "title" });
     txt(s, "C-V 定剖面形状 · Q 与击穿定尺寸 · 二维验证一维 · 工艺约束定可制造性", {
@@ -668,7 +802,7 @@ async function applyThemeColors(file, name, colors) {
   // 22 小组分工（三卡）
   // =====================================================================
   {
-    const s = content("03 优化与结论");
+    const s = content("04 优化与结论");
     eyebrow(s, "TEAM");
     title(s, "小组分工");
     const roles = [
